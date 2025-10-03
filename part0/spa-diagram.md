@@ -19,7 +19,7 @@ sequenceDiagram
     deactivate server
 
     Note right of browser: The browser starts executing the JavaScript code that fetches the JSON from the server
-    Note right of browser: The JavaScript file is different than the one given in excercise 0.4: New note diagram
+    Note right of browser: The JavaScript file is different than the one given in https://studies.cs.helsinki.fi/exampleapp/notes
 
     browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/data.json
     activate server
