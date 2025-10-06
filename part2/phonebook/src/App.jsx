@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import personsService from './services/persons'
+import Notification from './components/Notification';
 
 const Filter = ({ searchTerm, handleSearchTerm }) => <div> filter shown with: <input value={searchTerm} onChange={handleSearchTerm} /></div>
 
@@ -34,6 +35,7 @@ const App = () => {
   const [newName, setNewName] = useState('');
   const [newNumber, setNewNumber] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+  const [message, setMessage] = useState(null);
 
   const handleNewPerson = (event) => {
     event.preventDefault()
@@ -47,6 +49,10 @@ const App = () => {
         personsService.update(oldPerson.id, changedPerson)
           .then(updatedPerson => {
             setPersons(persons.map(person => person.id != oldPerson.id ? person : updatedPerson));
+            setMessage(`Updated ${updatedPerson.name}'s number`);
+            setTimeout(() => {
+              setMessage(null);
+            }, 5000);
           });
 
         setNewName('');
@@ -67,6 +73,10 @@ const App = () => {
         .then(newPerson => {
           console.log('newPerson', newPerson);
           setPersons(persons.concat(newPerson));
+          setMessage(`Added ${newPerson.name}`);
+          setTimeout(() => {
+            setMessage(null);
+          }, 5000);
           setNewName('');
           setNewNumber('');
         });
@@ -115,6 +125,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message} />
       <Filter searchTerm={searchTerm} handleSearchTerm={handleSearchTerm} />
 
       <h3>Add a new</h3>
