@@ -4,7 +4,7 @@ const Filter = ({ searchTerm, handleSearchTerm }) => <div> filter shown with: <i
 
 const PersonForm = (props) => {
   return (
-    <form onSubmit={props.handleNewPerson}>
+    <form onSubmit={props.onSubmit}>
       <div>
         name: <input value={props.newName} onChange={props.handleNewName} />
         number: <input value={props.newNumber} onChange={props.handleNewNumber} />
@@ -53,6 +53,7 @@ const App = () => {
       number: newNumber,
       id: persons.length + 1
     };
+    console.log('newPerson', newPerson);
     setPersons(persons.concat(newPerson));
     setNewName('');
     setNewNumber('');
