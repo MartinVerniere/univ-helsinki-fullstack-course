@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import axios from 'axios'
+import personsService from './services/persons'
 
 const Filter = ({ searchTerm, handleSearchTerm }) => <div> filter shown with: <input value={searchTerm} onChange={handleSearchTerm} /></div>
 
@@ -50,10 +50,10 @@ const App = () => {
       id: persons.length + 1
     };
 
-    axios.post('http://localhost:3001/persons', newPerson)
-      .then(response => {
-        console.log('newPerson', response.data);
-        setPersons(persons.concat(response.data));
+    personsService.create(newPerson)
+      .then(newPerson => {
+        console.log('newPerson', newPerson);
+        setPersons(persons.concat(newPerson));
         setNewName('');
         setNewNumber('');
       });
@@ -78,10 +78,10 @@ const App = () => {
   }
 
   useEffect(() => {
-    axios.get('http://localhost:3001/persons')
-      .then(response => {
+    personsService.getAll()
+      .then(initialPeople => {
         console.log('promise fulfilled');
-        setPersons(response.data);
+        setPersons(initialPeople);
       })
   }, []);
 
