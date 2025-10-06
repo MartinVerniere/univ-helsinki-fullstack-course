@@ -9,6 +9,12 @@ const App = () => {
   const handleNewPerson = (event) => {
     event.preventDefault()
     console.log('button clicked', event.target);
+
+    if (persons.some(person => person.name === newName)) {
+      alert(`${newName} is already added to phonebook`);
+      return;
+    }
+
     const newPerson = {
       name: newName
     };
@@ -23,7 +29,6 @@ const App = () => {
 
   return (
     <div>
-      <div>debug: {newName}</div>
       <h2>Phonebook</h2>
       <form onSubmit={handleNewPerson}>
         <div>
