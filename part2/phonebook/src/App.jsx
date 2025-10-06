@@ -49,10 +49,15 @@ const App = () => {
       number: newNumber,
       id: persons.length + 1
     };
-    console.log('newPerson', newPerson);
-    setPersons(persons.concat(newPerson));
-    setNewName('');
-    setNewNumber('');
+
+    axios.post('http://localhost:3001/persons', newPerson)
+      .then(response => {
+        console.log('newPerson', response.data);
+        setPersons(persons.concat(response.data));
+        setNewName('');
+        setNewNumber('');
+      });
+
   }
 
   const handleNewName = (event) => {
