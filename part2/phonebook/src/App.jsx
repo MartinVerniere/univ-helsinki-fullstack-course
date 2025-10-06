@@ -17,12 +17,12 @@ const PersonForm = (props) => {
   );
 }
 
-const Persons = ({ personsToShow }) => {
+const Persons = ({ personsToShow, handleDelete }) => {
   return (
     <div>
       {personsToShow.map(person =>
         <div key={person.id}>
-          {person.name} {person.number}
+          {person.name} {person.number} <button onClick={() => handleDelete(person.id)}>delete</button>
         </div>
       )}
     </div>
@@ -47,7 +47,6 @@ const App = () => {
     const newPerson = {
       name: newName,
       number: newNumber,
-      id: persons.length + 1
     };
 
     personsService.create(newPerson)
@@ -77,6 +76,20 @@ const App = () => {
     setSearchTerm(event.target.value);
   }
 
+  const handleDelete = (id) => {
+    if (window.confirm('Are you sure you want to delete this person?')) {
+      personsService.deletePerson(id)
+        .then((newPersons) => {
+          setPersons(persons.filter(person => person.id != id));
+        })
+        .catch(error => {
+          console.error('There was an error deleting the person!', error);
+        });
+    } else {
+      console.log('Deletion cancelled');
+    }
+  }
+
   useEffect(() => {
     personsService.getAll()
       .then(initialPeople => {
@@ -94,7 +107,7 @@ const App = () => {
       <PersonForm onSubmit={handleNewPerson} newName={newName} handleNewName={handleNewName} newNumber={newNumber} handleNewNumber={handleNewNumber} />
 
       <h3>Numbers</h3>
-      <Persons personsToShow={personsToShow} />
+      <Persons personsToShow={personsToShow} handleDelete={handleDelete} />
     </div>
   )
 }
