@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import personsService from './services/persons'
 import Notification from './components/Notification';
+import ErrorNotification from './components/ErrorNotification';
 
 const Filter = ({ searchTerm, handleSearchTerm }) => <div> filter shown with: <input value={searchTerm} onChange={handleSearchTerm} /></div>
 
@@ -36,6 +37,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [message, setMessage] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   const handleNewPerson = (event) => {
     event.preventDefault()
@@ -52,6 +54,13 @@ const App = () => {
             setMessage(`Updated ${updatedPerson.name}'s number`);
             setTimeout(() => {
               setMessage(null);
+            }, 5000);
+          })
+          .catch(error => {
+            console.error('There was an error updating the person!', error);
+            setErrorMessage('Information of the person has already been removed from server');
+            setTimeout(() => {
+              setErrorMessage(null);
             }, 5000);
           });
 
@@ -126,6 +135,7 @@ const App = () => {
     <div>
       <h2>Phonebook</h2>
       <Notification message={message} />
+      <ErrorNotification message={errorMessage} />
       <Filter searchTerm={searchTerm} handleSearchTerm={handleSearchTerm} />
 
       <h3>Add a new</h3>
