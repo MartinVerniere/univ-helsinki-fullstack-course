@@ -1,14 +1,14 @@
 import axios from 'axios';
 
-const baseURL = 'http://localhost:3001/countries';
+const baseURL = 'https://studies.cs.helsinki.fi/restcountries';
 
 const getAll = () => {
-    const request = axios.get(baseURL);
+    const request = axios.get(`${baseURL}/api/all`);
     return request.then(response => response.data);
 }
 
-const getByName = (id) => {
-    const request = axios.get(`${baseURL}/${id}`);
+const getByName = (name) => {
+    const request = axios.get(`${baseURL}/api/name/${name}`);
     return request.then(response => response.data);
 }
 

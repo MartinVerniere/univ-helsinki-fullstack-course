@@ -4,7 +4,8 @@ import { useEffect } from "react";
 
 const Filter = ({ searchTerm, handleSearchTerm }) => <div>find countries: <input value={searchTerm} onChange={handleSearchTerm} /></div>
 
-const Countries = ({ countries }) => {
+const Countries = ({ countries, handleCountryDetails }) => {
+  console.log("Countries: ", countries);
   if (countries.length == 0) return <div>No matches found</div>;
   if (countries.length == 1) return <CountryDetails country={countries[0]} />
   if (countries.length > 10) return <div>Too many matches, specify another filter</div>;
@@ -12,13 +13,14 @@ const Countries = ({ countries }) => {
   return (
     (countries.map(country =>
       <div key={country.id}>
-        {country.name.common}
+        {country.name.common} <button onClick={() => handleCountryDetails(country.name.common)}>Show</button>
       </div>
     ))
   );
 }
 
 const Details = ({ country }) => {
+  console.log("Details: ", country);
   return (
     <div>
       <p>Capital: {country.capital}</p>
@@ -28,7 +30,7 @@ const Details = ({ country }) => {
 }
 
 const Languages = ({ country }) => {
-  console.log("country: ", country);
+  console.log("Languages: ", country);
   const languages = Object.values(country.languages);
 
   console.log("languages: ", languages);
@@ -66,6 +68,10 @@ function App() {
     setSearchTerm(event.target.value)
   }
 
+  const handleCountryDetails = (name) => {
+    setSearchTerm(name);
+  }
+
   useEffect(() => {
     countriesService.getAll()
       .then(countries => {
@@ -82,7 +88,7 @@ function App() {
   return (
     <div>
       <Filter searchTerm={searchTerm} handleSearchTerm={handleSearchTerm} />
-      <Countries countries={countriesToShow} />
+      <Countries countries={countriesToShow} handleCountryDetails={handleCountryDetails} />
     </div>
   );
 }
