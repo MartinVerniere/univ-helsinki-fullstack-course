@@ -1,7 +1,7 @@
 import express from 'express';
-const app = express();
+import morgan from 'morgan';
 
-app.use(express.json());
+const app = express();
 
 let persons = [
     {
@@ -25,6 +25,9 @@ let persons = [
         "number": "39-23-6423122"
     }
 ];
+
+app.use(express.json());
+app.use(morgan('tiny'));
 
 app.get('/', (request, response) => {
     response.send('<h1>Hello World - Phonebook!</h1>');
