@@ -1,5 +1,6 @@
 import express from 'express';
 import morgan from 'morgan';
+import cors from 'cors';
 
 const app = express();
 
@@ -29,6 +30,7 @@ let persons = [
 app.use(express.json());
 morgan.token('body', (req) => JSON.stringify(req.body));
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'));
+app.use(cors());
 
 app.get('/', (request, response) => {
     response.send('<h1>Hello World - Phonebook!</h1>');
