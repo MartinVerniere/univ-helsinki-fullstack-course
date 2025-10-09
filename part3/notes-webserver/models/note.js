@@ -5,9 +5,7 @@ set('strictQuery', false);
 // DO NOT SAVE YOUR PASSWORD TO GITHUB!!
 const password = process.argv[2];
 
-//const url = process.env.MONGODB_URI;
-const url = `mongodb+srv://mnverniere_db_user:${password}@cluster-notes-univ-hels.goyuzel.mongodb.net/notesApp?retryWrites=true&w=majority&appName=cluster-notes-univ-helsinki`;
-
+const url = process.env.MONGODB_URI;
 
 console.log('connecting to', url);
 connect(url)

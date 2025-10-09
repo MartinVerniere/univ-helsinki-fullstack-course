@@ -1,5 +1,7 @@
+require('dotenv').config();
 import express from 'express';
 import Note from './models/note.js';
+
 
 const app = express();
 
@@ -89,7 +91,7 @@ app.post('/api/notes', (request, response) => {
     response.json(note);
 })
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
-})
+});
