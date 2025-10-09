@@ -23,11 +23,11 @@ app.get('/', (request, response) => {
 
 app.get('/api/notes', (request, response) => {
     Note.find({}).then(notes => {
-        response.json(notes)
+        response.json(notes);
     })
 })
 
-app.get('/api/notes/:id', (request, response) => {
+app.get('/api/notes/:id', (request, response, next) => {
     Note.findById(request.params.id)
         .then(note => {
             if (note) {
@@ -36,10 +36,7 @@ app.get('/api/notes/:id', (request, response) => {
                 response.status(404).end();
             }
         })
-        .catch(error => {
-            console.log(error);
-            response.status(400).send({ error: 'malformatted id' });
-        }) 
+        .catch(error => next(error));
 });
 
 app.post('/api/notes', (request, response) => {
@@ -58,6 +55,19 @@ app.post('/api/notes', (request, response) => {
         response.json(savedNote);
     })
 })
+
+const errorHandler = (error, request, response, next) => {
+    console.error(error.message)
+
+    if (error.name === 'CastError') {
+        return response.status(400).send({ error: 'malformatted id' })
+    }
+
+    next(error);
+}
+
+// this has to be the last loaded middleware, also all the routes should be registered before this!
+app.use(errorHandler)
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => {
