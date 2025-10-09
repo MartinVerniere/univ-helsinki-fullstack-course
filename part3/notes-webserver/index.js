@@ -56,6 +56,14 @@ app.post('/api/notes', (request, response) => {
     })
 })
 
+// Responds to all requests with 404 error - load after all request url
+const unknownEndpoint = (request, response) => {
+    response.status(404).send({ error: 'unknown endpoint' })
+}
+
+// handler of requests with unknown endpoint
+app.use(unknownEndpoint);
+
 const errorHandler = (error, request, response, next) => {
     console.error(error.message)
 
