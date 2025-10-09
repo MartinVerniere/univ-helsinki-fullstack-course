@@ -1,24 +1,28 @@
-const mongoose = require('mongoose')
+import * as dotenv from 'dotenv';
+dotenv.config();
+import { set, connect, Schema, model, connection } from 'mongoose'
 
 if (process.argv.length < 3) {
     console.log('give password as argument')
     process.exit(1)
 }
 
-const password = process.argv[2]
+const url = process.env.MONGODB_URI;
 
-const url = `mongodb+srv://mnverniere_db_user:${password}@cluster-notes-univ-hels.goyuzel.mongodb.net/notesApp?retryWrites=true&w=majority&appName=cluster-notes-univ-helsinki`
+set('strictQuery', false);
 
-mongoose.set('strictQuery', false)
+connect(url);
 
-mongoose.connect(url)
-
-const noteSchema = new mongoose.Schema({
-    content: String,
+const noteSchema = new Schema({
+    content: {
+        type: String,
+        minLength: 5,
+        required: true
+    },
     important: Boolean,
 })
 
-const Note = mongoose.model('Note', noteSchema)
+const Note = model('Note', noteSchema)
 
 /* const note = new Note({
     content: 'HTML is easy',
@@ -34,5 +38,5 @@ Note.find({}).then(result => { // or Note.find({ important: true }).then(result 
     result.forEach(note => {
         console.log(note)
     })
-    mongoose.connection.close()
+    connection.close()
 })

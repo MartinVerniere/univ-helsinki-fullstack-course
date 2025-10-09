@@ -8,9 +8,9 @@ POST http://localhost:3001/api/notes/ HTTP/1.1
 content-type: application/json
 
 {
-    "content": "sample",
+    "content": "lol",
     "important": true
 }
 
 ###
-DELETE http://localhost:3001/api/notes/68e812a797d7158406d55d0a HTTP/1.1
+DELETE http://localhost:3001/api/notes/68e812aa97d7158406d55d0d HTTP/1.1
