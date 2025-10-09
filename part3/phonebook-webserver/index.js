@@ -1,5 +1,8 @@
+import * as dotenv from 'dotenv';
+dotenv.config();
 import express from 'express';
 import morgan from 'morgan';
+import PhonebookEntry from './models/person.js';
 
 const app = express();
 
@@ -36,7 +39,10 @@ app.get('/', (request, response) => {
 })
 
 app.get('/api/persons', (request, response) => {
-    response.json(persons);
+    PhonebookEntry.find({})
+        .then(person => {
+            response.json(person);
+        })
 })
 
 app.get('/api/info', (request, response) => {
@@ -107,7 +113,7 @@ app.post('/api/persons', (request, response) => {
     response.json(person);
 })
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
+    console.log(`Server running on port ${PORT}`)
 })

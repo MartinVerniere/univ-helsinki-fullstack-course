@@ -1,0 +1,28 @@
+import * as dotenv from 'dotenv';
+dotenv.config();
+import { set, connect, Schema, model } from 'mongoose';
+
+set('strictQuery', false);
+
+const url = process.env.MONGODB_URI;
+
+connect(url)
+    .then(result => { console.log('connected to MongoDB'); })
+    .catch(error => {
+        console.log('error connecting to MongoDB:', error.message)
+    });
+
+const phonebookEntrySchema = new Schema({
+    name: String,
+    number: String,
+});
+
+phonebookEntrySchema.set('toJSON', {
+    transform: (document, returnedObject) => {
+        returnedObject.id = returnedObject._id.toString()
+        delete returnedObject._id
+        delete returnedObject.__v
+    }
+});
+
+export default model('PhonebookEntry', phonebookEntrySchema);
