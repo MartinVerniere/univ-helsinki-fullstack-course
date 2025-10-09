@@ -13,7 +13,7 @@ app.use(express.static('dist'));
 
 app.get('/', (request, response) => {
     response.send('<h1>Hello World - Phonebook!</h1>');
-})
+});
 
 app.get('/api/persons', (request, response) => {
     PhonebookEntry.find({})
