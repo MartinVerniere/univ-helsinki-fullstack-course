@@ -72,6 +72,25 @@ app.post('/api/persons', (request, response) => {
         });
 });
 
+app.put('/api/persons/:id', (request, response, next) => {
+    const { name, number } = request.body;
+
+    PhonebookEntry.findById(request.params.id)
+        .then(phonebookEntry => {
+            if (!phonebookEntry) {
+                return response.status(404).end();
+            }
+
+            phonebookEntry.name = name;
+            phonebookEntry.number = number;
+
+            return phonebookEntry.save().then((updatedPhonebookEntry) => {
+                response.json(updatedPhonebookEntry);
+            })
+        })
+        .catch(error => next(error))
+})
+
 const unknownEndpoint = (request, response) => {
     response.status(404).send({ error: 'unknown endpoint' })
 }
