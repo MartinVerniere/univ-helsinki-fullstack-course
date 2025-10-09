@@ -41,9 +41,13 @@ app.get('/api/info', (request, response) => {
 app.get('/api/persons/:id', (request, response, next) => {
     PhonebookEntry.findById(request.params.id)
         .then(phonebookEntry => {
-            response.json(phonebookEntry);
+            if (phonebookEntry) {
+                response.json(phonebookEntry);
+            } else {
+                response.status(404).end();
+            }
         })
-        .catch(error => next(error))
+        .catch(error => next(error));
 });
 
 app.delete('/api/persons/:id', (request, response, next) => {
@@ -51,7 +55,7 @@ app.delete('/api/persons/:id', (request, response, next) => {
         .then(result => {
             response.status(204).end();
         })
-        .catch(error => next(error))
+        .catch(error => next(error));
 });
 
 app.post('/api/persons', (request, response) => {
@@ -88,7 +92,7 @@ app.put('/api/persons/:id', (request, response, next) => {
                 response.json(updatedPhonebookEntry);
             })
         })
-        .catch(error => next(error))
+        .catch(error => next(error));
 })
 
 const unknownEndpoint = (request, response) => {
