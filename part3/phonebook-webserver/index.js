@@ -44,6 +44,17 @@ app.get('/api/persons/:id', (request, response) => {
     })
 });
 
+app.delete('/api/persons/:id', (request, response) => {
+    PhonebookEntry.findByIdAndDelete(request.params.id)
+        .then(result => {
+            response.status(204).end()
+        })
+        .catch(error => {
+            console.log(error);
+            response.status(400).send({ error: 'couldnt find id' });
+        })
+});
+
 app.post('/api/persons', (request, response) => {
     const body = request.body;
 
