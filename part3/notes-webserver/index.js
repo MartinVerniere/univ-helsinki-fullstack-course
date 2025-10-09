@@ -5,24 +5,6 @@ import Note from './models/note.js';
 
 const app = express();
 
-let notes = [
-    {
-        id: "1",
-        content: "HTML is easy",
-        important: true
-    },
-    {
-        id: "2",
-        content: "Browser can execute only JavaScript",
-        important: false
-    },
-    {
-        id: "3",
-        content: "GET and POST are the most important methods of HTTP protocol",
-        important: true
-    }
-];
-
 const requestLogger = (request, response, next) => {
     console.log('Method:', request.method)
     console.log('Path:  ', request.path)
@@ -46,16 +28,25 @@ app.get('/api/notes', (request, response) => {
 })
 
 app.get('/api/notes/:id', (request, response) => {
-    Note.findById(request.params.id).then(note => {
-        response.json(note)
-    })
+    Note.findById(request.params.id)
+        .then(note => {
+            if (note) {
+                response.json(note);
+            } else {
+                response.status(404).end();
+            }
+        })
+        .catch(error => {
+            console.log(error);
+            response.status(400).send({ error: 'malformatted id' });
+        }) 
 });
 
 app.post('/api/notes', (request, response) => {
     const body = request.body;
 
     if (!body.content) {
-        return response.status(400).json({ error: 'content missing' });
+        return response.status(400).send({ error: 'content missing' });
     }
 
     const note = new Note({
@@ -64,11 +55,11 @@ app.post('/api/notes', (request, response) => {
     });
 
     note.save().then(savedNote => {
-        response.json(savedNote)
+        response.json(savedNote);
     })
 })
 
-const PORT = process.env.PORT
+const PORT = process.env.PORT;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
 });
