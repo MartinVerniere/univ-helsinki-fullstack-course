@@ -58,9 +58,8 @@ app.delete('/api/persons/:id', (request, response, next) => {
         .catch(error => next(error));
 });
 
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
     const body = request.body;
-
     if (!body.name || !body.number) {
         return response.status(400).json({ error: 'Name or number missing' });
     }
@@ -73,24 +72,24 @@ app.post('/api/persons', (request, response) => {
     person.save()
         .then(savedPerson => {
             response.json(savedPerson)
-        });
+        })
+        .catch(error => next(error));
 });
+
+const opts = { runValidators: true };
 
 app.put('/api/persons/:id', (request, response, next) => {
     const { name, number } = request.body;
 
     PhonebookEntry.findById(request.params.id)
         .then(phonebookEntry => {
-            if (!phonebookEntry) {
-                return response.status(404).end();
-            }
+            if (!phonebookEntry) { return response.status(404).end(); }
 
-            phonebookEntry.name = name;
-            phonebookEntry.number = number;
-
-            return phonebookEntry.save().then((updatedPhonebookEntry) => {
-                response.json(updatedPhonebookEntry);
-            })
+            return phonebookEntry.update({}, { name: name, number: number }, opts)
+                .then((updatedPhonebookEntry) => {
+                    response.json(updatedPhonebookEntry);
+                })
+                .catch(error => next(error));
         })
         .catch(error => next(error));
 })
@@ -106,6 +105,8 @@ const errorHandler = (error, request, response, next) => {
 
     if (error.name === 'CastError') {
         return response.status(400).send({ error: 'malformatted id' })
+    } else if (error.name === 'ValidationError') {
+        return response.status(400).json({ error: error.message });
     }
 
     next(error);

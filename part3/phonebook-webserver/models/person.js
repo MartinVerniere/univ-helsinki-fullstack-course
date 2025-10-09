@@ -7,22 +7,26 @@ set('strictQuery', false);
 const url = process.env.MONGODB_URI;
 
 connect(url)
-    .then(result => { console.log('connected to MongoDB'); })
-    .catch(error => {
-        console.log('error connecting to MongoDB:', error.message)
-    });
+	.then(result => { console.log('connected to MongoDB'); })
+	.catch(error => {
+		console.log('error connecting to MongoDB:', error.message)
+	});
 
 const phonebookEntrySchema = new Schema({
-    name: String,
-    number: String,
+	name: {
+		type: String,
+		minLength: 3,
+		required: true
+	},
+	number: String,
 });
 
 phonebookEntrySchema.set('toJSON', {
-    transform: (document, returnedObject) => {
-        returnedObject.id = returnedObject._id.toString()
-        delete returnedObject._id
-        delete returnedObject.__v
-    }
+	transform: (document, returnedObject) => {
+		returnedObject.id = returnedObject._id.toString()
+		delete returnedObject._id
+		delete returnedObject.__v
+	}
 });
 
 export default model('PhonebookEntry', phonebookEntrySchema);
