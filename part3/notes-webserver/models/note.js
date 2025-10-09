@@ -1,9 +1,8 @@
+import * as dotenv from 'dotenv';
+dotenv.config();
 import { set, connect, Schema, model } from 'mongoose';
 
 set('strictQuery', false);
-
-// DO NOT SAVE YOUR PASSWORD TO GITHUB!!
-const password = process.argv[2];
 
 const url = process.env.MONGODB_URI;
 
