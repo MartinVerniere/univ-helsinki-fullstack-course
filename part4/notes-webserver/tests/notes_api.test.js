@@ -9,14 +9,10 @@ const helper = require('./test_helper')
 const api = supertest(app)
 
 ///
-beforeEach(
-  async () => {
-    await Note.deleteMany({})
-    let noteObject = new Note(helper.initialNotes[0])
-    await noteObject.save()
-    noteObject = new Note(helper.initialNotes[1])
-    await noteObject.save()
-  })
+beforeEach(async () => {
+  await Note.deleteMany({})
+  await Note.insertMany(helper.initialNotes)
+})
 
 ///
 test('notes are returned as json', async () => {
