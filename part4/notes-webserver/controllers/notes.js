@@ -15,12 +15,9 @@ notesRouter.get('/:id', async (request, response) => {
   }
 })
 
-notesRouter.delete('/:id', (request, response, next) => {
-  Note.findByIdAndDelete(request.params.id)
-    .then(() => {
-      response.status(204).end()
-    })
-    .catch(error => next(error))
+notesRouter.delete('/:id', async (request, response) => {
+  await Note.findByIdAndDelete(request.params.id)
+  response.status(204).end()
 })
 
 notesRouter.post('/', async (request, response) => {
