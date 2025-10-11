@@ -81,6 +81,32 @@ test('blogs sent without property likes, default to 0', async () => {
   assert.strictEqual(addedBlog.likes, 0)
 })
 
+///
+test('blogs sent without property title, return error 404', async () => {
+  const newBlog = {
+    author: "Test author",
+    url: "https://test.com/",
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
+})
+
+///
+test('blogs sent without property url, return error 404', async () => {
+  const newBlog = {
+    title: "Test title",
+    author: "Test author",
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
+})
+
 after(async () => {
   await mongoose.connection.close()
 })
