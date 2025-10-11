@@ -42,7 +42,6 @@ test('blogs are return with property id', async () => {
 ///
 test('a valid blog can be added', async () => {
   const newBlog = {
-    id: "8888888888888888",
     title: "Test title",
     author: "Test author",
     url: "https://test.com/",
@@ -60,6 +59,26 @@ test('a valid blog can be added', async () => {
 
   const contents = blogsAtEnd.map(n => n.title)
   assert(contents.includes('Test title'))
+})
+
+///
+test('blogs sent without property likes, default to 0', async () => {
+  const newBlog = {
+    title: "Test title",
+    author: "Test author",
+    url: "https://test.com/",
+  }
+
+  const response = await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  const addedBlog = response.body
+
+  console.log("addedBlog: ", addedBlog)
+  assert.strictEqual(addedBlog.likes, 0)
 })
 
 after(async () => {
