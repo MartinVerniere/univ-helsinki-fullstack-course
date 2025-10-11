@@ -107,6 +107,31 @@ test('blogs sent without property url, return error 404', async () => {
     .expect(400)
 })
 
+///
+test('a blog with valid id can be deleted', async () => {
+  const blogsAtStart = await helper.blogsInDb()
+  const blogToDelete = blogsAtStart[0]
+
+  await api
+    .delete(`/api/blogs/${blogToDelete.id}`)
+    .expect(204)
+
+  const blogsAtEnd = await helper.blogsInDb()
+
+  console.log("blogsAtEnd: ",blogsAtEnd)
+  console.log("blogToDelete: ", blogToDelete)
+
+  assert(!blogsAtEnd.includes(blogToDelete))
+
+  assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length - 1)
+})
+
+test('a blog with invalid id cant be deleted', async () => {
+  await api
+    .delete(`/api/blogs/12`)
+    .expect(400)
+})
+
 after(async () => {
   await mongoose.connection.close()
 })
