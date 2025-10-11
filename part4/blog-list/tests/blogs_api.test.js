@@ -77,7 +77,6 @@ test('blogs sent without property likes, default to 0', async () => {
 
   const addedBlog = response.body
 
-  console.log("addedBlog: ", addedBlog)
   assert.strictEqual(addedBlog.likes, 0)
 })
 
@@ -118,9 +117,6 @@ test('a blog with valid id can be deleted', async () => {
 
   const blogsAtEnd = await helper.blogsInDb()
 
-  console.log("blogsAtEnd: ",blogsAtEnd)
-  console.log("blogToDelete: ", blogToDelete)
-
   assert(!blogsAtEnd.includes(blogToDelete))
 
   assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length - 1)
@@ -130,6 +126,36 @@ test('a blog with invalid id cant be deleted', async () => {
   await api
     .delete(`/api/blogs/12`)
     .expect(400)
+})
+
+test('a blog with valid id can be edited', async () => {
+  const blogsAtStart = await helper.blogsInDb()
+  const blogToEdit = blogsAtStart[0]
+
+  const editedBlog = { ...blogToEdit, likes: blogToEdit.likes + 1000 }
+
+  await api
+    .put(`/api/blogs/${blogToEdit.id}`)
+    .send(editedBlog)
+    .expect(204)
+
+  const blogsAtEnd = await helper.blogsInDb()
+  const updatedBlog = blogsAtEnd.find(blog => blog.id === blogToEdit.id)
+
+  assert.ok(updatedBlog)
+  assert.strictEqual(updatedBlog.likes, editedBlog.likes)
+})
+
+test('a blog with invalid id cant be edited', async () => {
+  const blogsAtStart = await helper.blogsInDb()
+  const blogToEdit = blogsAtStart[0]
+
+  const editedBlog = { ...blogToEdit, likes: blogToEdit.likes + 1000 }
+
+  await api
+    .put(`/api/blogs/5a422bc61b54a676234d17fc`)
+    .send(editedBlog)
+    .expect(404)
 })
 
 after(async () => {
