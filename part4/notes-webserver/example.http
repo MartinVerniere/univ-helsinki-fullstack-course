@@ -8,8 +8,9 @@ POST http://localhost:3001/api/notes/ HTTP/1.1
 content-type: application/json
 
 {
-    "content": "lol",
-    "important": true
+    "content": "This has content",
+    "important": true,
+    "userId": "68eab291b567aa79183fb60d"
 }
 
 ###
