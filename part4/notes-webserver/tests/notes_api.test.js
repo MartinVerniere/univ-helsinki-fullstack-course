@@ -42,7 +42,7 @@ test('a specific note is within the returned notes', async () => {
 })
 
 ///
-test('a valid note can be added ', async () => {
+test('a valid note can be added', async () => {
   const newNote = {
     content: 'async/await simplifies making async calls',
     important: true,
