@@ -1,4 +1,4 @@
-# BLOGS
+############################## BLOGS ##############################
 ###
 GET http://localhost:3003/api/blogs/
 
@@ -13,9 +13,7 @@ content-type: application/json
     "likes": 20
 }
 
-
-
-# USERS
+############################## USERS ##############################
 ###
 GET http://localhost:3003/api/users/
 
