@@ -1,3 +1,14 @@
+############################## LOGIN ##############################
+###
+POST http://localhost:3003/api/login/
+content-type: application/json
+
+{
+    "username": "mluukkai",
+    "password": "salainen"
+}
+
+
 ############################## BLOGS ##############################
 ###
 GET http://localhost:3003/api/blogs/
