@@ -4,8 +4,8 @@ POST http://localhost:3003/api/login/
 content-type: application/json
 
 {
-    "username": "hellas",
-    "password": "salainen"
+    "username": "test",
+    "password": "password"
 }
 
 
@@ -16,7 +16,7 @@ GET http://localhost:3003/api/blogs/
 ###
 POST http://localhost:3003/api/blogs/ HTTP/1.1
 content-type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImhlbGxhcyIsImlkIjoiNjhlY2ZlODVmMDkxZmRlZWM0NzQ4YzhlIiwiaWF0IjoxNzYwMzY2MDAyfQ.TxOgoCThmTnNOc6y3Km0sKcvv0iqy4V53i79_2S_UVA
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3QiLCJpZCI6IjY4ZWQ1MjI3NTRmZTdmNTQ3OGM0NDdiZiIsImlhdCI6MTc2MDM4NDY1N30.c64E5EwMU8BnH4KVyAhwNjlVx16i-XXkv2HT9SPm57Y
 
 {
     "title": "test",
@@ -26,9 +26,9 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imhlb
 }
 
 ###
-DELETE http://localhost:3003/api/blogs/68ed071dda1a72bdfe8f4c1b HTTP/1.1
+DELETE http://localhost:3003/api/blogs/68ed5823e447e377674ce879 HTTP/1.1
 content-type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImhlbGxhcyIsImlkIjoiNjhlY2ZlODVmMDkxZmRlZWM0NzQ4YzhlIiwiaWF0IjoxNzYwMzY2MDAyfQ.TxOgoCThmTnNOc6y3Km0sKcvv0iqy4V53i79_2S_UVA
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3QiLCJpZCI6IjY4ZWQ1MjI3NTRmZTdmNTQ3OGM0NDdiZiIsImlhdCI6MTc2MDM4NDQ4NX0.MBUdpRt0BB2gdJly13zdZ3iD35eOWrbeURaj9XUjviI
 
 ############################## USERS ##############################
 ###
@@ -39,7 +39,7 @@ POST http://localhost:3003/api/users/ HTTP/1.1
 content-type: application/json
 
 {
-    "username": "hellas",
-    "name": "Arto Hellas",
-    "password": "salainen"
+    "username": "test",
+    "name": "Test user",
+    "password": "password"
 }

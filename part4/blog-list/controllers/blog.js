@@ -1,8 +1,6 @@
 const blogsRouter = require('express').Router()
-const blog = require('../models/blog')
 const Blog = require('../models/blog')
-const User = require('../models/user')
-const jwt = require('jsonwebtoken')
+const middleware = require('../utils/middleware')
 
 blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog.find({}).populate('user', { username: 1, name: 1, url: 1, likes: 1 })
@@ -18,19 +16,9 @@ blogsRouter.get('/:id', async (request, response) => {
   }
 })
 
-blogsRouter.post('/', async (request, response) => {
+blogsRouter.post('/', middleware.tokenExtractor, middleware.userExtractor, async (request, response) => {
+  const user = request.user
   const body = request.body
-
-  if (!request.token) return response.status(400).json({ error: 'No token sent on request' })
-
-  const decodedToken = jwt.verify(request.token, process.env.SECRET)
-  if (!decodedToken.id) {
-    return response.status(401).json({ error: 'token invalid' })
-  }
-
-  const user = await User.findById(decodedToken.id)
-  if (!user) { return response.status(400).json({ error: 'No users exist to assign to new blog' }) }
-
   if (!body.url || !body.title) { response.status(400).json(request) }
 
   const blog = new Blog({
@@ -48,16 +36,12 @@ blogsRouter.post('/', async (request, response) => {
   response.status(201).json(savedBlog)
 })
 
-blogsRouter.delete('/:id', async (request, response) => {
-  if (!request.token) return response.status(400).json({ error: 'No token sent on request' })
-
+blogsRouter.delete('/:id', middleware.tokenExtractor, middleware.userExtractor, async (request, response) => {
   const blogToDelete = await Blog.findById(request.params.id)
   if (!blogToDelete) { return response.status(400).json({ error: 'Blog doesnt exist' }) }
   const blogCreatorId = blogToDelete.user.toString()
 
-  const decodedToken = jwt.verify(request.token, process.env.SECRET)
-  if (!decodedToken.id) { return response.status(401).json({ error: 'token invalid' }) }
-  const user = await User.findById(decodedToken.id)
+  const user = request.user
 
   if (blogCreatorId !== user.id.toString()) { return response.status(401).json({ error: 'Not authorized to delete this blog' }) }
 
