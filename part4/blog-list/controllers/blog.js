@@ -1,4 +1,5 @@
 const blogsRouter = require('express').Router()
+const blog = require('../models/blog')
 const Blog = require('../models/blog')
 const User = require('../models/user')
 const jwt = require('jsonwebtoken')
@@ -19,6 +20,8 @@ blogsRouter.get('/:id', async (request, response) => {
 
 blogsRouter.post('/', async (request, response) => {
   const body = request.body
+
+  if (!request.token) return response.status(400).json({ error: 'No token sent on request' })
 
   const decodedToken = jwt.verify(request.token, process.env.SECRET)
   if (!decodedToken.id) {
@@ -46,7 +49,20 @@ blogsRouter.post('/', async (request, response) => {
 })
 
 blogsRouter.delete('/:id', async (request, response) => {
+  if (!request.token) return response.status(400).json({ error: 'No token sent on request' })
+
+  const blogToDelete = await Blog.findById(request.params.id)
+  if (!blogToDelete) { return response.status(400).json({ error: 'Blog doesnt exist' }) }
+  const blogCreatorId = blogToDelete.user.toString()
+
+  const decodedToken = jwt.verify(request.token, process.env.SECRET)
+  if (!decodedToken.id) { return response.status(401).json({ error: 'token invalid' }) }
+  const user = await User.findById(decodedToken.id)
+
+  if (blogCreatorId !== user.id.toString()) { return response.status(401).json({ error: 'Not authorized to delete this blog' }) }
+
   await Blog.findByIdAndDelete(request.params.id)
+
   response.status(204).end()
 })
 
