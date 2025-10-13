@@ -4,7 +4,7 @@ POST http://localhost:3003/api/login/
 content-type: application/json
 
 {
-    "username": "mluukkai",
+    "username": "hellas",
     "password": "salainen"
 }
 
@@ -16,6 +16,7 @@ GET http://localhost:3003/api/blogs/
 ###
 POST http://localhost:3003/api/blogs/ HTTP/1.1
 content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImhlbGxhcyIsImlkIjoiNjhlY2ZlODVmMDkxZmRlZWM0NzQ4YzhlIiwiaWF0IjoxNzYwMzY1MDA3fQ.0mdyrbPawUb9Iqi_gNzgQ40jnt_pZDygF02O-CZ4QLQ
 
 {
     "title": "test",
