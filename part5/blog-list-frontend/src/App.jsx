@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react'
-import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import BlogList from './components/BlogList'
 import LoginForm from './components/LoginForm'
 import CreateBlogForm from './components/CreateBlogForm'
+import Notification from './components/Notification'
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -14,7 +14,7 @@ const App = () => {
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
   const [url, setURL] = useState('');
-
+  const [message, setMessage] = useState(null);
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -28,6 +28,10 @@ const App = () => {
       setPassword('');
     } catch (error) {
       console.log(error);
+      setMessage("invalid username or password");
+      setTimeout(() => {
+        setMessage(null);
+      }, 5000);
     }
   }
 
@@ -44,17 +48,21 @@ const App = () => {
 
     try {
       const response = await blogService.create(newBlog);
-      console.log(response);
-      setBlogs([...blogs, newBlog]);
+      setBlogs(blogs.concat(response));
+      setTitle('');
+      setAuthor('');
+      setURL('');
+      setMessage(`a new blog ${newBlog.title} by ${newBlog.author} added`);
+      setTimeout(() => {
+        setMessage(null);
+      }, 5000);
     } catch (error) {
       console.log(error);
+      setMessage(`Blog '${newBlog.title}' couldnt be added to the list`);
+      setTimeout(() => {
+        setMessage(null);
+      }, 5000);
     }
-
-
-
-    setTitle('');
-    setAuthor('');
-    setURL('');
   }
 
   useEffect(() => {
@@ -77,6 +85,7 @@ const App = () => {
       {!user &&
         <div>
           <h2>Login to application</h2>
+          {message && <Notification message={message} />}
           <LoginForm
             username={username} setUsername={setUsername}
             password={password} setPassword={setPassword}
@@ -87,6 +96,7 @@ const App = () => {
       {user &&
         <div>
           <h2>blogs</h2>
+          {message && <Notification message={message} />}
           <div>{user.name} logged in</div>
           <button onClick={() => handleLogout()}>logout</button>
           <div>
