@@ -89,6 +89,8 @@ const App = () => {
     </Togglable>
   )
 
+  const sortComparison = (firstBlog, secondBlog) => secondBlog.likes - firstBlog.likes;
+
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs(blogs)
@@ -103,6 +105,10 @@ const App = () => {
       blogService.setToken(user.token)
     }
   }, []);
+
+  useEffect(() => {
+    setBlogs(blogs.sort(sortComparison));
+  }, [blogs])
 
   return (
     <div>
