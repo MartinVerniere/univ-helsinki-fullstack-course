@@ -7,12 +7,16 @@ import Footer from './components/Footer';
 import LoginForm from './components/LoginForm';
 import NoteForm from './components/NotesForm';
 import Togglable from './components/Togglable';
+import { useRef } from 'react';
 
 const App = () => {
   const [notes, setNotes] = useState([]);
   const [showAll, setShowAll] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
   const [user, setUser] = useState(null);
+
+  const noteFormRef = useRef();
+  const loginFormRef = useRef();
 
   const notesToShow = showAll ? notes : notes.filter(note => note.important);
 
@@ -35,15 +39,16 @@ const App = () => {
   }
 
   const addNote = async (noteObject) => {
-    const returnedNote = await noteService.create(noteObject)
-    setNotes(notes.concat(returnedNote))
+    noteFormRef.current.toggleVisibility();
+    const returnedNote = await noteService.create(noteObject);
+    setNotes(notes.concat(returnedNote));
   }
 
   const login = async (userObject) => {
     try {
-      const user = await loginService.login(userObject)
+      const user = await loginService.login(userObject);
       window.localStorage.setItem('loggedNoteappUser', JSON.stringify(user));
-      setUser(user)
+      setUser(user);
     } catch {
       setErrorMessage('wrong credentials');
       setTimeout(() => {
@@ -70,13 +75,13 @@ const App = () => {
   }, []);
 
   const loginForm = () => (
-    <Togglable buttonLabel="login">
+    <Togglable buttonLabel="login" ref={loginFormRef}>
       <LoginForm login={login} />
     </Togglable>
   )
 
   const noteForm = () => (
-    <Togglable buttonLabel="new note">
+    <Togglable buttonLabel="new note" ref={noteFormRef}>
       <NoteForm createNote={addNote} />
     </Togglable>
   )
