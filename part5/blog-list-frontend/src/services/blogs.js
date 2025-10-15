@@ -20,9 +20,19 @@ const create = async (newBlog) => {
 const update = async (updatedBlog) => {
   const config = { headers: { Authorization: token } };
   const url = `${baseURL}/${updatedBlog.id}`;
+  console.log(url, config);
   const request = axios.put(url, updatedBlog, config);
   const response = await request;
   return response.data;
 }
 
-export default { getAll, create, update, setToken }
+const remove = async (blogToDelete) => {
+  const config = { headers: { Authorization: token } };
+  const url = `${baseURL}/${blogToDelete.id}`;
+  console.log(url, config);
+  const request = axios.delete(url, config);
+  const response = await request;
+  return response.data;
+}
+
+export default { getAll, create, update, remove, setToken }

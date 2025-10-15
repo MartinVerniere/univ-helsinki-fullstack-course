@@ -76,6 +76,31 @@ const App = () => {
     }
   }
 
+  const deleteBlog = async (blogObject) => {
+    if (window.confirm(`Remove blog "${blogObject.title}" by ${blogObject.author}?`)) {
+      try {
+        await blogService.remove(blogObject);
+        setMessage(`blog ${blogObject.title} by ${blogObject.author} has been deleted`);
+
+        setBlogs(blogs.filter(blog => blog.id !== blogObject.id));
+
+        setTimeout(() => {
+          setMessage(null);
+        }, 5000);
+      } catch (error) {
+        console.log(error);
+        setMessage(`Blog '${blogObject.title}' couldnt be deleted`);
+
+        setTimeout(() => {
+          setMessage(null);
+        }, 5000);
+      }
+    } else {
+      console.log("Delete canceled");
+      return;
+    }
+  }
+
   const loginForm = () => (
     <Togglable buttonLabel="login" ref={null}>
       <LoginForm login={login} />
@@ -93,7 +118,7 @@ const App = () => {
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
-      setBlogs(blogs)
+      setBlogs(blogs.sort(sortComparison))
     )
   }, []);
 
@@ -123,7 +148,7 @@ const App = () => {
           <button onClick={() => handleLogout()}>logout</button>
           <h2>blogs</h2>
           {blogForm()}
-          <BlogList blogs={blogs} likeBlog={likeBlog} />
+          <BlogList blogs={blogs} likeBlog={likeBlog} user={user} deleteBlog={deleteBlog} />
         </div>
       }
     </div >
