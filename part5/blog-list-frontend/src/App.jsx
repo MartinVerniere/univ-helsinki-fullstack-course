@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import BlogList from './components/BlogList'
 import LoginForm from './components/LoginForm'
 import CreateBlogForm from './components/CreateBlogForm'
 import Notification from './components/Notification'
+import Togglable from '../../notes-frontend/src/components/Togglable'
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -15,6 +16,8 @@ const App = () => {
   const [author, setAuthor] = useState('');
   const [url, setURL] = useState('');
   const [message, setMessage] = useState(null);
+
+  const blogFormRef = useRef();
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -48,6 +51,7 @@ const App = () => {
 
     try {
       const response = await blogService.create(newBlog);
+      blogFormRef.current.toggleVisibility();
       setBlogs(blogs.concat(response));
       setTitle('');
       setAuthor('');
@@ -64,6 +68,28 @@ const App = () => {
       }, 5000);
     }
   }
+
+  const loginForm = () => (
+    <Togglable buttonLabel="login" ref={null}>
+      <LoginForm
+        username={username} setUsername={setUsername}
+        password={password} setPassword={setPassword}
+        handleLogin={handleLogin}
+      />
+    </Togglable>
+  )
+
+  const blogForm = () => (
+    <Togglable buttonLabel="new blog" ref={blogFormRef}>
+      <h2>Create new</h2>
+      <CreateBlogForm
+        title={title} setTitle={setTitle}
+        author={author} setAuthor={setAuthor}
+        url={url} setURL={setURL}
+        handleAddNewBlog={handleAddNewBlog}
+      />
+    </Togglable>
+  )
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -82,36 +108,21 @@ const App = () => {
 
   return (
     <div>
-      {!user &&
-        <div>
-          <h2>Login to application</h2>
-          {message && <Notification message={message} />}
-          <LoginForm
-            username={username} setUsername={setUsername}
-            password={password} setPassword={setPassword}
-            handleLogin={handleLogin}
-          />
-        </div>
-      }
+      <h1>Blogs</h1>
+      {message && <Notification message={message} />}
+
+      {!user && loginForm()}
+
       {user &&
         <div>
-          <h2>blogs</h2>
-          {message && <Notification message={message} />}
           <div>{user.name} logged in</div>
           <button onClick={() => handleLogout()}>logout</button>
-          <div>
-            <h2>Create new</h2>
-            <CreateBlogForm
-              title={title} setTitle={setTitle}
-              author={author} setAuthor={setAuthor}
-              url={url} setURL={setURL}
-              handleAddNewBlog={handleAddNewBlog}
-            />
-          </div>
+          <h2>blogs</h2>
+          {blogForm()}
           <BlogList blogs={blogs} />
         </div>
       }
-    </div>
+    </div >
   )
 }
 
