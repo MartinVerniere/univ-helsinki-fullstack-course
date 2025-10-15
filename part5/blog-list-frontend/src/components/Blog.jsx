@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react'
 
 const Blog = ({ blog, likeBlog, user, deleteBlog }) => {
   const blogStyle = {
@@ -9,7 +9,7 @@ const Blog = ({ blog, likeBlog, user, deleteBlog }) => {
     marginBottom: 5
   }
 
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(false)
 
   //const hideWhenVisible = { display: visible ? 'none' : '' }
   const showWhenVisible = { display: visible ? '' : 'none' }
@@ -19,7 +19,7 @@ const Blog = ({ blog, likeBlog, user, deleteBlog }) => {
   }
 
   const like = (event) => {
-    event.preventDefault();
+    event.preventDefault()
     likeBlog({
       id: blog.id,
       user: blog.user.id,
@@ -31,7 +31,7 @@ const Blog = ({ blog, likeBlog, user, deleteBlog }) => {
   }
 
   const remove = (event) => {
-    event.preventDefault();
+    event.preventDefault()
     deleteBlog({
       id: blog.id,
       user: blog.user.id,

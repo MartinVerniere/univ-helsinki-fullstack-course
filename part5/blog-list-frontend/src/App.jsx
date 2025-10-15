@@ -8,96 +8,96 @@ import Notification from './components/Notification'
 import Togglable from '../../notes-frontend/src/components/Togglable'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([]);
-  const [user, setUser] = useState(null);
-  const [message, setMessage] = useState(null);
+  const [blogs, setBlogs] = useState([])
+  const [user, setUser] = useState(null)
+  const [message, setMessage] = useState(null)
 
-  const blogFormRef = useRef();
+  const blogFormRef = useRef()
 
   const login = async (userObject) => {
     try {
-      const user = await loginService.login(userObject);
-      window.localStorage.setItem('loggedNoteappUser', JSON.stringify(user));
-      blogService.setToken(user.token);
-      setUser(user);
+      const user = await loginService.login(userObject)
+      window.localStorage.setItem('loggedNoteappUser', JSON.stringify(user))
+      blogService.setToken(user.token)
+      setUser(user)
     } catch (error) {
-      console.log(error);
-      setMessage("invalid username or password");
+      console.log(error)
+      setMessage('invalid username or password')
       setTimeout(() => {
-        setMessage(null);
-      }, 5000);
+        setMessage(null)
+      }, 5000)
     }
   }
 
   const handleLogout = () => {
-    window.localStorage.removeItem('loggedNoteappUser');
-    blogService.setToken(null);
-    setUser(null);
+    window.localStorage.removeItem('loggedNoteappUser')
+    blogService.setToken(null)
+    setUser(null)
   }
 
   const createBlog = async (blogObject) => {
     try {
-      const blogAdded = await blogService.create(blogObject);
-      blogFormRef.current.toggleVisibility();
-      setBlogs(blogs.concat(blogAdded));
-      setMessage(`a new blog ${blogAdded.title} by ${blogAdded.author} added`);
+      const blogAdded = await blogService.create(blogObject)
+      blogFormRef.current.toggleVisibility()
+      setBlogs(blogs.concat(blogAdded))
+      setMessage(`a new blog ${blogAdded.title} by ${blogAdded.author} added`)
 
       setTimeout(() => {
-        setMessage(null);
-      }, 5000);
+        setMessage(null)
+      }, 5000)
     } catch (error) {
-      console.log(error);
-      setMessage(`Blog '${blogObject.title}' couldnt be added to the list`);
+      console.log(error)
+      setMessage(`Blog '${blogObject.title}' couldnt be added to the list`)
 
       setTimeout(() => {
-        setMessage(null);
-      }, 5000);
+        setMessage(null)
+      }, 5000)
     }
   }
 
   const likeBlog = async (blogObject) => {
     try {
-      const blogLiked = await blogService.update(blogObject);
-      console.log(blogLiked);
-      setMessage(`blog ${blogLiked.title} by ${blogLiked.author} has been liked`);
+      const blogLiked = await blogService.update(blogObject)
+      console.log(blogLiked)
+      setMessage(`blog ${blogLiked.title} by ${blogLiked.author} has been liked`)
 
-      setBlogs(blogs.map(blog => blog.id === blogLiked.id ? blogLiked : blog));
+      setBlogs(blogs.map(blog => blog.id === blogLiked.id ? blogLiked : blog))
 
       setTimeout(() => {
-        setMessage(null);
-      }, 5000);
+        setMessage(null)
+      }, 5000)
     } catch (error) {
-      console.log(error);
-      setMessage(`Blog '${blogObject.title}' couldnt be liked`);
+      console.log(error)
+      setMessage(`Blog '${blogObject.title}' couldnt be liked`)
 
       setTimeout(() => {
-        setMessage(null);
-      }, 5000);
+        setMessage(null)
+      }, 5000)
     }
   }
 
   const deleteBlog = async (blogObject) => {
     if (window.confirm(`Remove blog "${blogObject.title}" by ${blogObject.author}?`)) {
       try {
-        await blogService.remove(blogObject);
-        setMessage(`blog ${blogObject.title} by ${blogObject.author} has been deleted`);
+        await blogService.remove(blogObject)
+        setMessage(`blog ${blogObject.title} by ${blogObject.author} has been deleted`)
 
-        setBlogs(blogs.filter(blog => blog.id !== blogObject.id));
+        setBlogs(blogs.filter(blog => blog.id !== blogObject.id))
 
         setTimeout(() => {
-          setMessage(null);
-        }, 5000);
+          setMessage(null)
+        }, 5000)
       } catch (error) {
-        console.log(error);
-        setMessage(`Blog '${blogObject.title}' couldnt be deleted`);
+        console.log(error)
+        setMessage(`Blog '${blogObject.title}' couldnt be deleted`)
 
         setTimeout(() => {
-          setMessage(null);
-        }, 5000);
+          setMessage(null)
+        }, 5000)
       }
     } else {
-      console.log("Delete canceled");
-      return;
+      console.log('Delete canceled')
+      return
     }
   }
 
@@ -114,13 +114,13 @@ const App = () => {
     </Togglable>
   )
 
-  const sortComparison = (firstBlog, secondBlog) => secondBlog.likes - firstBlog.likes;
+  const sortComparison = (firstBlog, secondBlog) => secondBlog.likes - firstBlog.likes
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs(blogs.sort(sortComparison))
     )
-  }, []);
+  }, [])
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedNoteappUser')
@@ -129,10 +129,10 @@ const App = () => {
       setUser(user)
       blogService.setToken(user.token)
     }
-  }, []);
+  }, [])
 
   useEffect(() => {
-    setBlogs(blogs.sort(sortComparison));
+    setBlogs(blogs.sort(sortComparison))
   }, [blogs])
 
   return (
@@ -155,4 +155,4 @@ const App = () => {
   )
 }
 
-export default App;
+export default App
