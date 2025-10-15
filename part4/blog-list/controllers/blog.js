@@ -52,7 +52,7 @@ blogsRouter.delete('/:id', middleware.tokenExtractor, middleware.userExtractor, 
 
 blogsRouter.put('/:id', async (request, response) => {
   const { id } = request.params
-  const { title, author, url, likes } = request.body
+  const { title, author, url, likes, user } = request.body
 
   console.log("id: ", id);
 
@@ -64,10 +64,11 @@ blogsRouter.put('/:id', async (request, response) => {
   blogToUpdate.author = author || blogToUpdate.author
   blogToUpdate.url = url || blogToUpdate.url
   blogToUpdate.likes = likes || blogToUpdate.likes
+  blogToUpdate.user = user || blogToUpdate.user
 
-  await blogToUpdate.save()
+  const updatedBlog = await blogToUpdate.save()
 
-  response.status(204).end()
+  response.status(201).json(updatedBlog)
 })
 
 module.exports = blogsRouter

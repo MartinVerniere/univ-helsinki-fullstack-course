@@ -169,7 +169,7 @@ describe('when initially blogs database is empty', () => {
       await api
         .put(`/api/blogs/${blogToEdit.id}`)
         .send(editedBlog)
-        .expect(204)
+        .expect(201)
 
       const blogsAtEnd = await helper.blogsInDb()
       const updatedBlog = blogsAtEnd.find(blog => blog.id === blogToEdit.id)

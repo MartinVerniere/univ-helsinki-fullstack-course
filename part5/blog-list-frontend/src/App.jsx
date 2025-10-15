@@ -55,6 +55,27 @@ const App = () => {
     }
   }
 
+  const likeBlog = async (blogObject) => {
+    try {
+      const blogLiked = await blogService.update(blogObject);
+      console.log(blogLiked);
+      setMessage(`blog ${blogLiked.title} by ${blogLiked.author} has been liked`);
+
+      setBlogs(blogs.map(blog => blog.id === blogLiked.id ? blogLiked : blog));
+
+      setTimeout(() => {
+        setMessage(null);
+      }, 5000);
+    } catch (error) {
+      console.log(error);
+      setMessage(`Blog '${blogObject.title}' couldnt be liked`);
+
+      setTimeout(() => {
+        setMessage(null);
+      }, 5000);
+    }
+  }
+
   const loginForm = () => (
     <Togglable buttonLabel="login" ref={null}>
       <LoginForm login={login} />
@@ -64,7 +85,7 @@ const App = () => {
   const blogForm = () => (
     <Togglable buttonLabel="new blog" ref={blogFormRef}>
       <h2>Create new</h2>
-      <BlogsForm createBlog={createBlog} />
+      <BlogsForm createBlog={createBlog} likeBlog={likeBlog} />
     </Togglable>
   )
 
@@ -96,7 +117,7 @@ const App = () => {
           <button onClick={() => handleLogout()}>logout</button>
           <h2>blogs</h2>
           {blogForm()}
-          <BlogList blogs={blogs} />
+          <BlogList blogs={blogs} likeBlog={likeBlog} />
         </div>
       }
     </div >
