@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState } from 'react'
 
 const NoteForm = ({ createNote }) => {
-    const [newNote, setNewNote] = useState('a new note...');
+    const [newNote, setNewNote] = useState('')
 
-    const addNote = (event) => {
-        event.preventDefault();
+    const addNote = event => {
+        event.preventDefault()
         createNote({
             content: newNote,
             important: true
