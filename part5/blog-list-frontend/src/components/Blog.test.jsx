@@ -61,31 +61,31 @@ describe('when testing a blog', () => {
     expect(likesElement).toBeDefined()
   })
 
-  /*   test('when clicking "view" button twice, event handler is called twice', async () => {
-      const blogObject = {
-        title: 'Component testing is done with react-testing-library',
-        author: 'author for the test',
-        url: 'url for the test',
-        likes: 1,
-        user: { name: 'Test user', username: 'TestUser' }
-      }
-  
-      const userObject = { username: 'CurrentUser' }
-  
-      const likeBlog = vi.fn()
-      const deleteBlog = vi.fn()
-  
-      render(<Blog blog={blogObject} user={userObject} likeBlog={likeBlog} deleteBlog={deleteBlog} />)
-  
-      screen.debug()
-  
-      const user = userEvent.setup()
-      const button = screen.getByText('view')
-      const likeButton = screen.getByText('like')
-      await user.click(button)
-      await user.click(likeButton)
-      await user.click(likeButton)
-  
-      expect(likeBlog.mock.calls).toHaveLength(2)
-    }) */
+  test('when clicking "view" button twice, event handler is called twice', async () => {
+    const blogObject = {
+      title: 'Component testing is done with react-testing-library',
+      author: 'author for the test',
+      url: 'url for the test',
+      likes: 1,
+      user: { name: 'Test user', username: 'TestUser' }
+    }
+
+    const userObject = { username: 'CurrentUser' }
+
+    const likeBlog = vi.fn()
+    const deleteBlog = vi.fn()
+
+    render(<Blog blog={blogObject} user={userObject} likeBlog={likeBlog} deleteBlog={deleteBlog} />)
+
+    //screen.debug()
+
+    const user = userEvent.setup()
+    const button = screen.getByText('view')
+    const likeButton = screen.getByText('like')
+    await user.click(button)
+    await user.click(likeButton)
+    await user.click(likeButton)
+
+    expect(likeBlog.mock.calls).toHaveLength(2)
+  })
 })
