@@ -14,12 +14,12 @@ describe('when there is initially one user in db', () => {
     await User.deleteMany({})
 
     const passwordHash = await bcrypt.hash('sekret', 10)
-    const user = new User({ username: 'root', passwordHash })
+    const user = new User({ name:'test user', username: 'root', passwordHash })
 
     await user.save()
   })
 
-  test('creation succeeds with a valid and password username', async () => {
+  test('creation succeeds with valid username and password ', async () => {
     const usersAtStart = await helper.usersInDb()
 
     console.log("Users in DB: ", usersAtStart)

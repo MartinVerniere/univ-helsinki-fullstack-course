@@ -23,13 +23,15 @@ describe('when testing a blog', () => {
 
     const titleElement = screen.queryByText('Component testing is done with react-testing-library')
     const authorElement = screen.queryByText('author for the test')
-    const urlElement = screen.queryByText('url for the test')
-    const likesElement = screen.queryByText(1)
+    const urlElement = screen.getByText('url for the test')
+    const likesElement = screen.getByText(/likes: 1/i)
+
+
 
     expect(titleElement).toBeDefined()
     expect(authorElement).toBeDefined()
-    expect(urlElement).toBeNull()
-    expect(likesElement).toBeNull()
+    expect(urlElement).not.toBeVisible()
+    expect(likesElement).not.toBeVisible()
   })
 
   test('renders url and likes are shown when clicking "view" button', async () => {
