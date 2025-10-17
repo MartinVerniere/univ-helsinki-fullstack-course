@@ -11,6 +11,13 @@ describe('Blog app', () => {
                 password: 'salainen'
             }
         })
+        await request.post('http://localhost:3003/api/users', {
+            data: {
+                name: 'unauthorized_delete_user',
+                username: 'second_user',
+                password: 'password'
+            }
+        })
 
         await page.goto('http://localhost:5173')
     })
@@ -70,6 +77,15 @@ describe('Blog app', () => {
 
                 await expect(page.getByText('blog test title by test author has been deleted')).toBeVisible()
                 await expect(page.getByText('test title test author')).not.toBeVisible()
+            })
+
+            test('a blog can only be deleted by user who created it', async ({ page }) => {
+                await page.getByRole('button', { name: 'logout' }).click()
+                await loginWith(page, 'second_user', 'password')
+
+                await page.getByRole('button', { name: 'view' }).click()
+
+                await expect(page.getByRole('button', { name: 'delete' })).not.toBeVisible()
             })
         })
     })
