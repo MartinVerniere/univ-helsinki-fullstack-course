@@ -1,5 +1,5 @@
 const { test, expect, beforeEach, describe } = require('@playwright/test')
-const { loginWith, createBlog } = require('./helpers')
+const { loginWith, createBlog, likeBlog } = require('./helpers')
 
 describe('Blog app', () => {
     beforeEach(async ({ page, request }) => {
@@ -65,9 +65,10 @@ describe('Blog app', () => {
 
             test('a blog can be liked', async ({ page }) => {
                 await page.getByRole('button', { name: 'view' }).click()
-                await page.getByRole('button', { name: 'like' }).click()
+                const blog = page.locator('.detailed-info')
+                await likeBlog(page, blog, 'test title', 'test author')
 
-                await expect(page.getByText('url: test url likes: 1 like')).toBeVisible()
+                await expect(page.getByText('likes: 1 like')).toBeVisible()
             })
 
             test('a blog can be deleted', async ({ page }) => {
@@ -86,6 +87,44 @@ describe('Blog app', () => {
                 await page.getByRole('button', { name: 'view' }).click()
 
                 await expect(page.getByRole('button', { name: 'delete' })).not.toBeVisible()
+            })
+        })
+
+        describe('and multiple blogs exists', () => {
+            beforeEach(async ({ page }) => {
+                await createBlog(page, 'first title', 'first author', 'first url')
+                await createBlog(page, 'second title', 'second author', 'second url')
+                await createBlog(page, 'third title', 'third author', 'third url')
+            })
+
+            describe('and have likes', () => {
+                beforeEach(async ({ page }) => {
+                    const viewButtons = await page.getByRole('button', { name: 'view' }).all()
+
+                    await viewButtons[0].click()
+                    await viewButtons[0].click()
+                    await viewButtons[0].click()
+
+                    const blogs = await page.locator('.detailed-info').all()
+                    console.log("blogs:", blogs)
+
+                    await likeBlog(page, blogs[0], 'first title', 'first author')
+                    await page.waitForTimeout(5000); // Wait until notification dissapears
+                    await likeBlog(page, blogs[0], 'first title', 'first author')
+                    await likeBlog(page, blogs[1], 'second title', 'second author')
+                    await page.waitForTimeout(5000); // Wait until notification dissapears
+                    await likeBlog(page, blogs[1], 'second title', 'second author')
+                    await page.waitForTimeout(5000); // Wait until notification dissapears
+                    await likeBlog(page, blogs[1], 'second title', 'second author')
+                    await likeBlog(page, blogs[2], 'third title', 'third author')
+                })
+
+                test('blogs are arranged in order of likes', async ({ page }) => {
+                    const blogs = await page.locator('.detailed-info').all()
+                    await expect(blogs[0].locator('.likes').getByText('likes: 3 like')).toBeVisible()
+                    await expect(blogs[1].locator('.likes').getByText('likes: 2 like')).toBeVisible()
+                    await expect(blogs[2].locator('.likes').getByText('likes: 1 like')).toBeVisible()
+                })
             })
         })
     })
