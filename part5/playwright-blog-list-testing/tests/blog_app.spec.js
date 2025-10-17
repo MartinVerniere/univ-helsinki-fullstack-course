@@ -2,8 +2,8 @@ const { test, expect, beforeEach, describe } = require('@playwright/test')
 
 describe('Blog app', () => {
     beforeEach(async ({ page, request }) => {
-        await request.post('http://localhost:5173/api/testing/reset')
-        await request.post('http://localhost:5173/api/users', {
+        await request.post('http://localhost:3003/api/testing/reset')
+        await request.post('http://localhost:3003/api/users', {
             data: {
                 name: 'mluukkai',
                 username: 'mluukkai',
@@ -59,6 +59,24 @@ describe('Blog app', () => {
             await page.getByLabel('url').fill('test url')
             await page.getByRole('button', { name: 'create' }).click()
             await expect(page.getByText('test title test author')).toBeVisible()
+        })
+
+        describe('and a blog exists', () => {
+            beforeEach(async ({ page }) => {
+                await page.getByRole('button', { name: 'new blog' }).click()
+                await page.getByLabel('title').fill('test title')
+                await page.getByLabel('author').fill('test author')
+                await page.getByLabel('url').fill('test url')
+                await page.getByRole('button', { name: 'create' }).click()
+                await page.getByText('test title test author').waitFor()
+            })
+
+            test('a note can be liked', async ({ page }) => {
+                await page.getByRole('button', { name: 'view' }).click()
+                await page.getByRole('button', { name: 'like' }).click()
+
+                await expect(page.getByText('url: test url likes: 1 like')).toBeVisible()
+            })
         })
     })
 })
