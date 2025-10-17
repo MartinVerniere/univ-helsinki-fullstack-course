@@ -58,6 +58,8 @@ describe('Blog app', () => {
             await page.getByLabel('author').fill('test author')
             await page.getByLabel('url').fill('test url')
             await page.getByRole('button', { name: 'create' }).click()
+
+            await expect(page.getByText('a new blog test title by test author added')).toBeVisible()
             await expect(page.getByText('test title test author')).toBeVisible()
         })
 
@@ -68,14 +70,23 @@ describe('Blog app', () => {
                 await page.getByLabel('author').fill('test author')
                 await page.getByLabel('url').fill('test url')
                 await page.getByRole('button', { name: 'create' }).click()
-                await page.getByText('test title test author').waitFor()
             })
 
             test('a note can be liked', async ({ page }) => {
+                await page.getByText('test title test author').waitFor()
                 await page.getByRole('button', { name: 'view' }).click()
                 await page.getByRole('button', { name: 'like' }).click()
 
                 await expect(page.getByText('url: test url likes: 1 like')).toBeVisible()
+            })
+
+            test('a note can be deleted', async ({ page }) => {
+                await page.getByRole('button', { name: 'view' }).click()
+                page.on('dialog', dialog => dialog.accept());
+                await page.getByRole('button', { name: 'delete' }).click()
+
+                await expect(page.getByText('blog test title by test author has been deleted')).toBeVisible()
+                await expect(page.getByText('test title test author')).not.toBeVisible()
             })
         })
     })
