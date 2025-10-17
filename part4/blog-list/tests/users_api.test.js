@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt')
 const User = require('../models/user')
+const Blog = require('../models/blog')
 const assert = require('node:assert')
 const { test, after, beforeEach, describe } = require('node:test')
 const mongoose = require('mongoose')
@@ -12,6 +13,7 @@ const api = supertest(app)
 describe('when there is initially one user in db', () => {
   beforeEach(async () => {
     await User.deleteMany({})
+    await Blog.deleteMany({})
 
     const passwordHash = await bcrypt.hash('sekret', 10)
     const user = new User({ name:'test user', username: 'root', passwordHash })
