@@ -41,5 +41,3 @@ const renderApp = () => {
 
 renderApp()
 store.subscribe(renderApp)
-
-export default App
