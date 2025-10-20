@@ -38,7 +38,12 @@
     {
       "id": "1ebc",
       "content": "This is a new anecdote using Redux Thunk!!!",
-      "votes": 2
+      "votes": 3
+    },
+    {
+      "id": "4ad7",
+      "content": "Create new anecdote !!!!",
+      "votes": 1
     }
   ]
 }
