@@ -1,3 +1,5 @@
+import { createSlice } from '@reduxjs/toolkit'
+
 const anecdotesAtStart = [
   'If it hurts, do it more often',
   'Adding manpower to a late software project makes it later!',
@@ -7,56 +9,40 @@ const anecdotesAtStart = [
   'Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.'
 ]
 
-const getId = () => (100000 * Math.random()).toFixed(0)
+const generateId = () => Number((Math.random() * 1000000).toFixed(0))
 
 const asObject = anecdote => {
   return {
     content: anecdote,
-    id: getId(),
+    id: generateId(),
     votes: 0
   }
 }
 
 const initialState = anecdotesAtStart.map(asObject)
 
-export const voteFor = id => {
-  return {
-    type: 'VOTE',
-    payload: {
-      id: id
-    }
-  }
-}
-
-const generateId = () => Number((Math.random() * 1000000).toFixed(0))
-
-export const createAnecdote = (anecdote) => {
-  return {
-    type: 'ADD_ANECDOTE',
-    payload: {
-      content: anecdote,
-      id: generateId(),
-      votes: 0
-    }
-  }
-}
-
-const reducer = (state = initialState, action) => {
-  switch (action.type) {
-    case 'ADD_ANECDOTE': {
-      return [...state, action.payload]
-    }
-    case 'VOTE': {
-      const anecdoteId = action.payload.id
+const anecdoteSlice = createSlice({
+  name: 'anecdotes',
+  initialState,
+  reducers: {
+    voteFor(state, action) {
+      const anecdoteId = action.payload
       const anecdoteToChange = state.find(anecdote => anecdote.id === anecdoteId)
       const newAnecdote = { ...anecdoteToChange, votes: 1 + anecdoteToChange.votes }
       const orderedAnecdotes = state.map(anecdote => (anecdote.id === anecdoteId ? newAnecdote : anecdote))
       orderedAnecdotes.sort((firstAnecdote, secondAnecdote) => secondAnecdote.votes - firstAnecdote.votes)
       return orderedAnecdotes
-    }
-    default:
-      return state
+    },
+    createAnecdote(state, action) {
+      const content = action.payload
+      state.push({
+        id: generateId(),
+        content,
+        votes: 0
+      })
+    },
   }
-}
+})
 
-export default reducer
+export const { voteFor, createAnecdote } = anecdoteSlice.actions
+export default anecdoteSlice.reducer
