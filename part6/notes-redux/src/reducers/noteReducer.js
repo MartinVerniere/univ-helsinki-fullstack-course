@@ -34,7 +34,7 @@ export const initializeNotes = () => {
 export const appendNote = (content) => {
     return async (dispatch) => {
         const newNote = await noteService.createNew(content)
-        dispatch(noteSlice.actions.createNote(newNote))
+        dispatch(createNote(newNote))
     }
 }
 
