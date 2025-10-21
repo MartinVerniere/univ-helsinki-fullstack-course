@@ -7,8 +7,13 @@
     },
     {
       "content": "useReducer is an alternative way for data management",
-      "important": false,
+      "important": true,
       "id": "2"
+    },
+    {
+      "id": "11be",
+      "content": "Added new note with useMutation",
+      "important": true
     }
   ]
 }
