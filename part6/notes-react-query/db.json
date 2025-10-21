@@ -7,12 +7,42 @@
     },
     {
       "content": "useReducer is an alternative way for data management",
-      "important": true,
+      "important": false,
       "id": "2"
     },
     {
       "id": "11be",
       "content": "Added new note with useMutation",
+      "important": true
+    },
+    {
+      "id": "268d",
+      "content": "New note optimized",
+      "important": false
+    },
+    {
+      "id": "d9af",
+      "content": "New note optimized 2",
+      "important": true
+    },
+    {
+      "id": "ec2a",
+      "content": "New note added !!!",
+      "important": false
+    },
+    {
+      "id": "10c9",
+      "content": "New note added instantly",
+      "important": true
+    },
+    {
+      "id": "bf0b",
+      "content": "New note added instantly",
+      "important": false
+    },
+    {
+      "id": "e835",
+      "content": "Adding new note",
       "important": true
     }
   ]
