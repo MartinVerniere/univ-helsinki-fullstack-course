@@ -3,7 +3,8 @@ import { useState } from 'react'
 import {
   BrowserRouter as Router,
   Routes, Route, Link,
-  useParams
+  useParams,
+  useNavigate
 } from 'react-router-dom'
 
 const Home = () => (
@@ -15,6 +16,7 @@ const Home = () => (
 const Note = ({ notes }) => {
   const id = useParams().id
   const note = notes.find(n => n.id === Number(id))
+
   return (
     <div>
       <h2>{note.content}</h2>
@@ -43,6 +45,31 @@ const Users = () => (
   </div>
 )
 
+const Login = (props) => {
+  const navigate = useNavigate()
+
+  const onSubmit = (event) => {
+    event.preventDefault()
+    props.onLogin('mluukkai')
+    navigate('/')
+  }
+
+  return (
+    <div>
+      <h2>login</h2>
+      <form onSubmit={onSubmit}>
+        <div>
+          username: <input />
+        </div>
+        <div>
+          password: <input type='password' />
+        </div>
+        <button type="submit">login</button>
+      </form>
+    </div>
+  )
+}
+
 const App = () => {
 
   const padding = {
@@ -69,6 +96,11 @@ const App = () => {
       user: 'Arto Hellas'
     }
   ])
+  const [user, setUser] = useState(null)
+
+  const login = (user) => {
+    setUser(user)
+  }
 
   return (
     <Router>
@@ -76,12 +108,17 @@ const App = () => {
         <Link style={padding} to="/">home</Link>
         <Link style={padding} to="/notes">notes</Link>
         <Link style={padding} to="/users">users</Link>
+        {user
+          ? <em>{user} logged in</em>
+          : <Link style={padding} to="/login">login</Link>
+        }
       </div>
 
       <Routes>
         <Route path="/notes/:id" element={<Note notes={notes} />} />
         <Route path="/notes" element={<Notes notes={notes} />} />
         <Route path="/users" element={<Users />} />
+        <Route path="/login" element={<Login onLogin={login} />} />
         <Route path="/" element={<Home />} />
       </Routes>
 
