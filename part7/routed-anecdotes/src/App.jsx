@@ -1,9 +1,7 @@
 import { useState } from 'react'
 import {
-  BrowserRouter as Router,
   Routes, Route, Link,
   useMatch,
-  Navigate,
   useNavigate
 } from 'react-router-dom'
 
@@ -107,7 +105,19 @@ const CreateNew = (props) => {
   )
 }
 
+const Notification = ({ notification }) => {
+  if (!notification) return null
+
+  return (
+    <div>
+      {notification}
+    </div>
+  )
+}
+
 const App = () => {
+  const navigate = useNavigate()
+
   const [anecdotes, setAnecdotes] = useState([
     {
       content: 'If it hurts, do it more often',
@@ -125,11 +135,16 @@ const App = () => {
     }
   ])
 
-  const [notification, setNotification] = useState('')
+  const [notification, setNotification] = useState(null)
 
   const addNew = (anecdote) => {
     anecdote.id = Math.round(Math.random() * 10000)
     setAnecdotes(anecdotes.concat(anecdote))
+    setNotification(`'${anecdote.content}' has been added!`)
+    setTimeout(() => {
+      setNotification(null)
+    }, 5000);
+    navigate('/')
   }
 
   const anecdoteById = (id) =>
@@ -155,6 +170,7 @@ const App = () => {
     <div>
       <h1>Software anecdotes</h1>
       <Menu />
+      <Notification notification={notification} />
       <Routes>
         <Route path="/anecdotes/:id" element={<Anecdote anecdote={anecdote} />} />
         <Route path="/create" element={<CreateNew addNew={addNew} />} />
