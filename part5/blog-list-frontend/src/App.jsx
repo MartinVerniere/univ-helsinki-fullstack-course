@@ -5,7 +5,7 @@ import BlogList from './components/BlogList'
 import LoginForm from './components/LoginForm'
 import BlogsForm from './components/BlogsForm'
 import Notification from './components/Notification'
-import Togglable from '../../notes-frontend/src/components/Togglable'
+import Togglable from './components/Togglable'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
