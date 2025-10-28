@@ -6,11 +6,12 @@ import LoginForm from './components/LoginForm'
 import BlogsForm from './components/BlogsForm'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { notifyAnError, notifyCreated, notifyDeleted, notifyVoted } from './reducers/notificationReducer'
+import { appendBlog, initializeBlogs } from './reducers/blogReducer'
 
 const App = () => {
-	const [blogs, setBlogs] = useState([])
+	const blogs = useSelector(({ blogs }) => blogs)
 	const [user, setUser] = useState(null)
 
 	const blogFormRef = useRef()
@@ -41,7 +42,7 @@ const App = () => {
 		try {
 			const blogAdded = await blogService.create(blogObject)
 			blogFormRef.current.toggleVisibility()
-			setBlogs(blogs.concat(blogAdded))
+			dispatch(appendBlog(blogAdded))
 			dispatch(notifyCreated(`a new blog '${blogAdded.title}' by ${blogAdded.author} added`, 5))
 		} catch (error) {
 			console.log(error)
@@ -54,7 +55,7 @@ const App = () => {
 			const blogLiked = await blogService.update(blogObject)
 			console.log(blogLiked)
 			dispatch(notifyVoted(`blog '${blogLiked.title}' by ${blogLiked.author} has been liked`, 5))
-			setBlogs(blogs.map((blog) => blog.id === blogLiked.id ? blogLiked : blog))
+			//setBlogs(blogs.map((blog) => blog.id === blogLiked.id ? blogLiked : blog))
 		} catch (error) {
 			console.log(error)
 			dispatch(notifyAnError(`Blog '${blogObject.title}' couldn't be liked`, 5))
@@ -68,7 +69,7 @@ const App = () => {
 			try {
 				await blogService.remove(blogObject)
 				dispatch(notifyDeleted(`blog '${blogObject.title}' by ${blogObject.author} has been deleted`, 5))
-				setBlogs(blogs.filter((blog) => blog.id !== blogObject.id))
+				//setBlogs(blogs.filter((blog) => blog.id !== blogObject.id))
 			} catch (error) {
 				console.log(error)
 				dispatch(notifyAnError(`Blog '${blogObject.title}' couldn't be deleted`, 5))
@@ -92,14 +93,11 @@ const App = () => {
 		</Togglable>
 	)
 
-	const sortComparison = (firstBlog, secondBlog) =>
-		secondBlog.likes - firstBlog.likes
+	const sortComparison = (firstBlog, secondBlog) => secondBlog.likes - firstBlog.likes
 
 	useEffect(() => {
-		blogService
-			.getAll()
-			.then((blogs) => setBlogs(blogs.sort(sortComparison)))
-	}, [])
+		dispatch(initializeBlogs())
+	}, [dispatch])
 
 	useEffect(() => {
 		const loggedUserJSON = window.localStorage.getItem('loggedNoteappUser')
@@ -111,7 +109,7 @@ const App = () => {
 	}, [])
 
 	useEffect(() => {
-		setBlogs(blogs.sort(sortComparison))
+		//setBlogs(blogs.sort(sortComparison))
 	}, [blogs])
 
 	return (
