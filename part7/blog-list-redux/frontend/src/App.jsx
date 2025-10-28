@@ -8,7 +8,7 @@ import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import { useDispatch, useSelector } from 'react-redux'
 import { notifyAnError, notifyCreated, notifyDeleted, notifyVoted } from './reducers/notificationReducer'
-import { appendBlog, initializeBlogs } from './reducers/blogReducer'
+import { appendBlog, initializeBlogs, removeBlog, voteForBlog } from './reducers/blogReducer'
 
 const App = () => {
 	const blogs = useSelector(({ blogs }) => blogs)
@@ -40,10 +40,9 @@ const App = () => {
 
 	const createBlog = async (blogObject) => {
 		try {
-			const blogAdded = await blogService.create(blogObject)
+			dispatch(appendBlog(blogObject))
+			dispatch(notifyCreated(`a new blog '${blogObject.title}' by ${blogObject.author} added`, 5))
 			blogFormRef.current.toggleVisibility()
-			dispatch(appendBlog(blogAdded))
-			dispatch(notifyCreated(`a new blog '${blogAdded.title}' by ${blogAdded.author} added`, 5))
 		} catch (error) {
 			console.log(error)
 			dispatch(notifyAnError(`Blog '${blogObject.title}' couldn't be added to the list`, 5))
@@ -52,10 +51,8 @@ const App = () => {
 
 	const likeBlog = async (blogObject) => {
 		try {
-			const blogLiked = await blogService.update(blogObject)
-			console.log(blogLiked)
-			dispatch(notifyVoted(`blog '${blogLiked.title}' by ${blogLiked.author} has been liked`, 5))
-			//setBlogs(blogs.map((blog) => blog.id === blogLiked.id ? blogLiked : blog))
+			dispatch(voteForBlog(blogObject))
+			dispatch(notifyVoted(`blog '${blogObject.title}' by ${blogObject.author} has been liked`, 5))
 		} catch (error) {
 			console.log(error)
 			dispatch(notifyAnError(`Blog '${blogObject.title}' couldn't be liked`, 5))
@@ -67,9 +64,8 @@ const App = () => {
 			window.confirm(`Remove blog '${blogObject.title}' by ${blogObject.author}?`)
 		) {
 			try {
-				await blogService.remove(blogObject)
+				dispatch(removeBlog(blogObject))
 				dispatch(notifyDeleted(`blog '${blogObject.title}' by ${blogObject.author} has been deleted`, 5))
-				//setBlogs(blogs.filter((blog) => blog.id !== blogObject.id))
 			} catch (error) {
 				console.log(error)
 				dispatch(notifyAnError(`Blog '${blogObject.title}' couldn't be deleted`, 5))
@@ -89,11 +85,9 @@ const App = () => {
 	const blogForm = () => (
 		<Togglable buttonLabel="new blog" ref={blogFormRef}>
 			<h2>Create new</h2>
-			<BlogsForm createBlog={createBlog} likeBlog={likeBlog} />
+			<BlogsForm createBlog={createBlog} />
 		</Togglable>
 	)
-
-	const sortComparison = (firstBlog, secondBlog) => secondBlog.likes - firstBlog.likes
 
 	useEffect(() => {
 		dispatch(initializeBlogs())
@@ -107,10 +101,6 @@ const App = () => {
 			blogService.setToken(user.token)
 		}
 	}, [])
-
-	useEffect(() => {
-		//setBlogs(blogs.sort(sortComparison))
-	}, [blogs])
 
 	return (
 		<div>
