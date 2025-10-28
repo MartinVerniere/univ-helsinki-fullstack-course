@@ -1,6 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
-import blogService from './services/blogs'
-import loginService from './services/login'
+import { useEffect, useRef } from 'react'
 import BlogList from './components/BlogList'
 import LoginForm from './components/LoginForm'
 import BlogsForm from './components/BlogsForm'
@@ -9,34 +7,25 @@ import Togglable from './components/Togglable'
 import { useDispatch, useSelector } from 'react-redux'
 import { notifyAnError, notifyCreated, notifyDeleted, notifyVoted } from './reducers/notificationReducer'
 import { appendBlog, initializeBlogs, removeBlog, voteForBlog } from './reducers/blogReducer'
+import { initializeUser, loginUser, logoutUser } from './reducers/userReducer'
 
 const App = () => {
 	const blogs = useSelector(({ blogs }) => blogs)
-	const [user, setUser] = useState(null)
+	const user = useSelector(({ user }) => user)
 
 	const blogFormRef = useRef()
 	const dispatch = useDispatch()
 
-	const login = async (userObject) => {
+	const login = async (credentials) => {
 		try {
-			const user = await loginService.login(userObject)
-			window.localStorage.setItem(
-				'loggedNoteappUser',
-				JSON.stringify(user),
-			)
-			blogService.setToken(user.token)
-			setUser(user)
+			await dispatch(loginUser(credentials))
 		} catch (error) {
 			console.log(error)
 			dispatch(notifyAnError('invalid username or password', 5))
 		}
 	}
 
-	const handleLogout = () => {
-		window.localStorage.removeItem('loggedNoteappUser')
-		blogService.setToken(null)
-		setUser(null)
-	}
+	const handleLogout = () => dispatch(logoutUser())
 
 	const createBlog = async (blogObject) => {
 		try {
@@ -91,16 +80,8 @@ const App = () => {
 
 	useEffect(() => {
 		dispatch(initializeBlogs())
+		dispatch(initializeUser())
 	}, [dispatch])
-
-	useEffect(() => {
-		const loggedUserJSON = window.localStorage.getItem('loggedNoteappUser')
-		if (loggedUserJSON) {
-			const user = JSON.parse(loggedUserJSON)
-			setUser(user)
-			blogService.setToken(user.token)
-		}
-	}, [])
 
 	return (
 		<div>
