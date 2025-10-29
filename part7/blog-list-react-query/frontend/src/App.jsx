@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useContext } from 'react'
+import { useEffect, useRef, useContext } from 'react'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import BlogList from './components/BlogList'
@@ -8,18 +8,18 @@ import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import NotificationContext from './NotificationContext'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import UserContext from './UserContext'
 
 const App = () => {
 	const { notificationDispatch } = useContext(NotificationContext)
+	const { user, userDispatch } = useContext(UserContext)
 
 	const queryClient = useQueryClient()
-	const result = useQuery({
+	const resultBlogs = useQuery({
 		queryKey: ['blogs'],
 		queryFn: blogService.getAll,
 		retry: false
 	})
-
-	const [user, setUser] = useState(null)
 
 	const blogFormRef = useRef(null)
 
@@ -69,36 +69,42 @@ const App = () => {
 		}
 	})
 
-	const login = async (userObject) => {
-		try {
-			const user = await loginService.login(userObject)
+	const loginMutation = useMutation({
+		mutationFn: loginService.login,
+		onSuccess: (user) => {
 			window.localStorage.setItem('loggedNoteappUser', JSON.stringify(user))
 			blogService.setToken(user.token)
-			setUser(user)
+			userDispatch({ type: 'LOGIN', payload: user })
 
 			notificationDispatch({ type: 'LOGIN', payload: user })
 			setTimeout(() => { notificationDispatch({ type: 'CLEAR', payload: null }) }, 5000)
-		} catch (error) {
+		},
+		onError: (error) => {
 			console.log(error)
 
 			notificationDispatch({ type: 'ERROR_LOGIN', payload: { content: 'invalid username or password' } })
 			setTimeout(() => { notificationDispatch({ type: 'CLEAR', payload: null }) }, 5000)
 		}
-	}
+	})
 
-	const handleLogout = () => {
-		window.localStorage.removeItem('loggedNoteappUser')
-		blogService.setToken(null)
-		setUser(null)
-	}
+	const logoutMutation = useMutation({
+		mutationFn: () => Promise.resolve(),
+		onSuccess: () => {
+			window.localStorage.removeItem('loggedNoteappUser')
+			blogService.setToken(null)
+			userDispatch({ type: 'LOGOUT', payload: null })
+		}
+	})
 
+	const handleLogin = (credentials) => loginMutation.mutate(credentials)
+	const handleLogout = () => logoutMutation.mutate()
 	const addBlog = (blogObject) => newBlogMutation.mutate(blogObject)
 	const likeBlog = (blogObject) => updateBlogMutation.mutate(blogObject)
 	const deleteBlog = (blogObject) => deleteBlogMutation.mutate(blogObject)
 
 	const loginForm = () => (
 		<Togglable buttonLabel="login" ref={null}>
-			<LoginForm login={login} />
+			<LoginForm login={handleLogin} />
 		</Togglable>
 	)
 
@@ -113,12 +119,12 @@ const App = () => {
 		const loggedUserJSON = window.localStorage.getItem('loggedNoteappUser')
 		if (loggedUserJSON) {
 			const user = JSON.parse(loggedUserJSON)
-			setUser(user)
+			userDispatch({ type: 'LOGIN', payload: user })
 			blogService.setToken(user.token)
 		}
-	}, [])
+	}, [userDispatch])
 
-	console.log(JSON.parse(JSON.stringify(result)))
+	console.log(JSON.parse(JSON.stringify(resultBlogs)))
 
 	return (
 		<div>
@@ -134,7 +140,7 @@ const App = () => {
 					<h2>blogs</h2>
 					{blogForm()}
 					<BlogList
-						result={result}
+						result={resultBlogs}
 						likeBlog={likeBlog}
 						user={user}
 						deleteBlog={deleteBlog}
