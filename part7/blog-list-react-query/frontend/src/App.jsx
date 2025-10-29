@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useContext } from 'react'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import BlogList from './components/BlogList'
@@ -6,29 +6,30 @@ import LoginForm from './components/LoginForm'
 import BlogsForm from './components/BlogsForm'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
+import NotificationContext from './NotificationContext'
 
 const App = () => {
+	const { notificationDispatch } = useContext(NotificationContext)
+
 	const [blogs, setBlogs] = useState([])
 	const [user, setUser] = useState(null)
-	const [message, setMessage] = useState(null)
 
-	const blogFormRef = useRef()
+	const blogFormRef = useRef(null)
 
 	const login = async (userObject) => {
 		try {
 			const user = await loginService.login(userObject)
-			window.localStorage.setItem(
-				'loggedNoteappUser',
-				JSON.stringify(user),
-			)
+			window.localStorage.setItem('loggedNoteappUser', JSON.stringify(user))
 			blogService.setToken(user.token)
 			setUser(user)
+
+			notificationDispatch({ type: 'LOGIN', payload: user })
+			setTimeout(() => { notificationDispatch({ type: 'CLEAR', payload: null }) }, 5000)
 		} catch (error) {
 			console.log(error)
-			setMessage('invalid username or password')
-			setTimeout(() => {
-				setMessage(null)
-			}, 5000)
+
+			notificationDispatch({ type: 'ERROR_LOGIN', payload: { content: 'invalid username or password' } })
+			setTimeout(() => { notificationDispatch({ type: 'CLEAR', payload: null }) }, 5000)
 		}
 	}
 
@@ -43,22 +44,14 @@ const App = () => {
 			const blogAdded = await blogService.create(blogObject)
 			blogFormRef.current.toggleVisibility()
 			setBlogs(blogs.concat(blogAdded))
-			setMessage(
-				`a new blog ${blogAdded.title} by ${blogAdded.author} added`,
-			)
 
-			setTimeout(() => {
-				setMessage(null)
-			}, 5000)
+			notificationDispatch({ type: 'ADD', payload: blogAdded })
+			setTimeout(() => { notificationDispatch({ type: 'CLEAR', payload: null }) }, 5000)
 		} catch (error) {
 			console.log(error)
-			setMessage(
-				`Blog '${blogObject.title}' couldnt be added to the list`,
-			)
 
-			setTimeout(() => {
-				setMessage(null)
-			}, 5000)
+			notificationDispatch({ type: 'ERROR_ADD', payload: blogObject })
+			setTimeout(() => { notificationDispatch({ type: 'CLEAR', payload: null }) }, 5000)
 		}
 	}
 
@@ -66,59 +59,39 @@ const App = () => {
 		try {
 			const blogLiked = await blogService.update(blogObject)
 			console.log(blogLiked)
-			setMessage(
-				`blog ${blogLiked.title} by ${blogLiked.author} has been liked`,
-			)
+			setBlogs(blogs.map((blog) => blog.id === blogLiked.id ? blogLiked : blog))
 
-			setBlogs(
-				blogs.map((blog) =>
-					blog.id === blogLiked.id ? blogLiked : blog,
-				),
-			)
-
-			setTimeout(() => {
-				setMessage(null)
-			}, 5000)
+			notificationDispatch({ type: 'LIKE', payload: blogLiked })
+			setTimeout(() => { notificationDispatch({ type: 'CLEAR', payload: null }) }, 5000)
 		} catch (error) {
 			console.log(error)
-			setMessage(`Blog '${blogObject.title}' couldnt be liked`)
 
-			setTimeout(() => {
-				setMessage(null)
-			}, 5000)
+			notificationDispatch({ type: 'ERROR_LIKE', payload: blogObject })
+			setTimeout(() => { notificationDispatch({ type: 'CLEAR', payload: null }) }, 5000)
 		}
 	}
 
 	const deleteBlog = async (blogObject) => {
-		if (
-			window.confirm(
-				`Remove blog "${blogObject.title}" by ${blogObject.author}?`,
-			)
-		) {
+		if (window.confirm(`Remove blog "${blogObject.title}" by ${blogObject.author}?`)) {
 			try {
 				await blogService.remove(blogObject)
-				setMessage(
-					`blog ${blogObject.title} by ${blogObject.author} has been deleted`,
-				)
-
 				setBlogs(blogs.filter((blog) => blog.id !== blogObject.id))
 
-				setTimeout(() => {
-					setMessage(null)
-				}, 5000)
+				notificationDispatch({ type: 'DELETE', payload: blogObject })
+				setTimeout(() => { notificationDispatch({ type: 'CLEAR', payload: null }) }, 5000)
 			} catch (error) {
 				console.log(error)
-				setMessage(`Blog '${blogObject.title}' couldnt be deleted`)
 
-				setTimeout(() => {
-					setMessage(null)
-				}, 5000)
+				notificationDispatch({ type: 'ERROR_DELETE', payload: blogObject })
+				setTimeout(() => { notificationDispatch({ type: 'CLEAR', payload: null }) }, 5000)
 			}
 		} else {
 			console.log('Delete canceled')
 			return
 		}
 	}
+
+	const sortComparison = (firstBlog, secondBlog) => secondBlog.likes - firstBlog.likes
 
 	const loginForm = () => (
 		<Togglable buttonLabel="login" ref={null}>
@@ -129,12 +102,9 @@ const App = () => {
 	const blogForm = () => (
 		<Togglable buttonLabel="new blog" ref={blogFormRef}>
 			<h2>Create new</h2>
-			<BlogsForm createBlog={createBlog} likeBlog={likeBlog} />
+			<BlogsForm createBlog={createBlog} />
 		</Togglable>
 	)
-
-	const sortComparison = (firstBlog, secondBlog) =>
-		secondBlog.likes - firstBlog.likes
 
 	useEffect(() => {
 		blogService
@@ -158,7 +128,7 @@ const App = () => {
 	return (
 		<div>
 			<h1>Blogs</h1>
-			{message && <Notification message={message} />}
+			<Notification />
 
 			{!user && loginForm()}
 
