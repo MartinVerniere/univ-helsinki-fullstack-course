@@ -7,9 +7,17 @@ import BlogsForm from './components/BlogsForm'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import NotificationContext from './NotificationContext'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 const App = () => {
+	const queryClient = useQueryClient()
 	const { notificationDispatch } = useContext(NotificationContext)
+
+	const result = useQuery({
+		queryKey: ['blogs'],
+		queryFn: blogService.getAll,
+		retry: false
+	})
 
 	const [blogs, setBlogs] = useState([])
 	const [user, setUser] = useState(null)
@@ -39,21 +47,23 @@ const App = () => {
 		setUser(null)
 	}
 
-	const createBlog = async (blogObject) => {
-		try {
-			const blogAdded = await blogService.create(blogObject)
+	const newBlogMutation = useMutation({
+		mutationFn: blogService.create,
+		onSuccess: (blogAdded) => {
+			const blogs = queryClient.getQueryData(['blogs'])
+			queryClient.setQueryData(['blogs'], blogs.concat(blogAdded))
 			blogFormRef.current.toggleVisibility()
-			setBlogs(blogs.concat(blogAdded))
-
 			notificationDispatch({ type: 'ADD', payload: blogAdded })
 			setTimeout(() => { notificationDispatch({ type: 'CLEAR', payload: null }) }, 5000)
-		} catch (error) {
+		},
+		onError: (error, blogObject) => {
 			console.log(error)
-
 			notificationDispatch({ type: 'ERROR_ADD', payload: blogObject })
 			setTimeout(() => { notificationDispatch({ type: 'CLEAR', payload: null }) }, 5000)
 		}
-	}
+	})
+
+	const addBlog = (blogObject) => newBlogMutation.mutate(blogObject)
 
 	const likeBlog = async (blogObject) => {
 		try {
@@ -102,7 +112,7 @@ const App = () => {
 	const blogForm = () => (
 		<Togglable buttonLabel="new blog" ref={blogFormRef}>
 			<h2>Create new</h2>
-			<BlogsForm createBlog={createBlog} />
+			<BlogsForm createBlog={addBlog} />
 		</Togglable>
 	)
 
@@ -125,6 +135,8 @@ const App = () => {
 		setBlogs(blogs.sort(sortComparison))
 	}, [blogs])
 
+	console.log(JSON.parse(JSON.stringify(result)))
+
 	return (
 		<div>
 			<h1>Blogs</h1>
@@ -139,7 +151,7 @@ const App = () => {
 					<h2>blogs</h2>
 					{blogForm()}
 					<BlogList
-						blogs={blogs}
+						result={result}
 						likeBlog={likeBlog}
 						user={user}
 						deleteBlog={deleteBlog}
