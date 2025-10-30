@@ -1,63 +1,77 @@
-import { useState } from 'react'
+import { useDispatch } from 'react-redux'
+import { removeBlog, voteForBlog } from '../reducers/blogReducer'
+import { notifyAnError, notifyDeleted, notifyVoted } from '../reducers/notificationReducer'
+import { Link } from 'react-router-dom'
 
-const Blog = ({ blog, likeBlog, user, deleteBlog }) => {
-	const blogStyle = {
-		paddingTop: 10,
-		paddingLeft: 2,
-		border: 'solid',
-		borderWidth: 1,
-		marginBottom: 5,
-	}
-
-	const [visible, setVisible] = useState(false)
-
-	//const hideWhenVisible = { display: visible ? 'none' : '' }
-	const showWhenVisible = { display: visible ? '' : 'none' }
-
-	const toggleVisibility = () => {
-		setVisible(!visible)
-	}
+const Blog = ({ selectedBlog, user }) => {
+	const dispatch = useDispatch()
 
 	const like = (event) => {
 		event.preventDefault()
 		likeBlog({
-			id: blog.id,
-			user: blog.user.id,
-			likes: blog.likes + 1,
-			author: blog.author,
-			title: blog.title,
-			url: blog.url,
+			id: selectedBlog.id,
+			user: selectedBlog.user.id,
+			likes: selectedBlog.likes + 1,
+			author: selectedBlog.author,
+			title: selectedBlog.title,
+			url: selectedBlog.url,
 		})
 	}
 
 	const remove = (event) => {
 		event.preventDefault()
 		deleteBlog({
-			id: blog.id,
-			user: blog.user.id,
-			likes: blog.likes,
-			author: blog.author,
-			title: blog.title,
-			url: blog.url,
+			id: selectedBlog.id,
+			user: selectedBlog.user.id,
+			likes: selectedBlog.likes,
+			author: selectedBlog.author,
+			title: selectedBlog.title,
+			url: selectedBlog.url,
 		})
 	}
 
+	const likeBlog = async (blogObject) => {
+		try {
+			dispatch(voteForBlog(blogObject))
+			dispatch(notifyVoted(`blog '${blogObject.title}' by ${blogObject.author} has been liked`, 5))
+		} catch (error) {
+			console.log(error)
+			dispatch(notifyAnError(`blog '${blogObject.title}' couldn't be liked`, 5))
+		}
+	}
+
+	const deleteBlog = async (blogObject) => {
+		if (
+			window.confirm(`Remove selectedBlog '${blogObject.title}' by ${blogObject.author}?`)
+		) {
+			try {
+				dispatch(removeBlog(blogObject))
+				dispatch(notifyDeleted(`blog '${blogObject.title}' by ${blogObject.author} has been deleted`, 5))
+			} catch (error) {
+				console.log(error)
+				dispatch(notifyAnError(`blog '${blogObject.title}' couldn't be deleted`, 5))
+			}
+		} else {
+			console.log('Delete canceled')
+			return
+		}
+	}
+
+	if (!selectedBlog) return <div>Loading selectedBlog details...</div>
+
+	console.log('User in Blog component:', user)
+
 	return (
-		<div style={blogStyle}>
+		<div>
 			<div className="general-info">
-				{blog.title} {blog.author}{' '}
-				<button onClick={toggleVisibility}>
-					{visible ? 'hide' : 'view'}
-				</button>
-			</div>
-			<div style={showWhenVisible} className="detailed-info">
-				<div className="url">{blog.url}</div>
+				<h1>{selectedBlog.title} {selectedBlog.author}</h1>
+				<Link to={selectedBlog.url}>{selectedBlog.url}</Link>
 				<div className="likes">
-					likes: {blog.likes} <button onClick={like}>like</button>
+					likes: {selectedBlog.likes} <button onClick={like}>like</button>
 				</div>
-				<div className="user">{blog.user && blog.user.name}</div>
+				<div className="user">added by {selectedBlog.user.name}</div>
 				<div className="delete">
-					{blog.user && blog.user.username === user.username && (
+					{selectedBlog.user && selectedBlog.user.username === user.username && (
 						<button onClick={remove}>delete</button>
 					)}
 				</div>

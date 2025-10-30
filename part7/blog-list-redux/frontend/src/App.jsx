@@ -12,6 +12,7 @@ import { notifyAnError } from './reducers/notificationReducer'
 import Togglable from './components/Togglable'
 import userService from './services/users'
 import User from './components/User'
+import Blog from './components/Blog'
 
 const App = () => {
 	const blogs = useSelector(({ blogs }) => blogs)
@@ -40,10 +41,17 @@ const App = () => {
 		}
 	}
 
-	const match = useMatch('/users/:id')
-	const selectedUser = match
+	const userMatch = useMatch('/users/:id')
+	const selectedUser = userMatch
 		? users
-			? users.find(user => user.id === match.params.id)
+			? users.find(user => user.id === userMatch.params.id)
+			: null
+		: null
+
+	const blogMatch = useMatch('/blogs/:id')
+	const selectedBlog = blogMatch
+		? blogs
+			? blogs.find(blog => blog.id === blogMatch.params.id)
 			: null
 		: null
 
@@ -74,6 +82,7 @@ const App = () => {
 
 					<Routes>
 						<Route path="/" element={<Blogs blogs={blogs} user={user} />} />
+						<Route path="/blogs/:id" element={<Blog selectedBlog={selectedBlog} user={user} />} />
 						<Route path="/users/" element={<Users users={users} />} />
 						<Route path="/users/:id" element={<User selectedUser={selectedUser} />} />
 					</Routes>

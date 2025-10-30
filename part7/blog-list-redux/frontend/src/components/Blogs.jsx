@@ -1,6 +1,6 @@
 import { useDispatch } from 'react-redux'
-import { appendBlog, removeBlog, voteForBlog } from '../reducers/blogReducer'
-import { notifyAnError, notifyCreated, notifyDeleted, notifyVoted } from '../reducers/notificationReducer'
+import { appendBlog } from '../reducers/blogReducer'
+import { notifyAnError, notifyCreated } from '../reducers/notificationReducer'
 import BlogList from './BlogList'
 import { useRef } from 'react'
 import Togglable from './Togglable'
@@ -21,33 +21,6 @@ const Blogs = ({ blogs, user }) => {
 		}
 	}
 
-	const likeBlog = async (blogObject) => {
-		try {
-			dispatch(voteForBlog(blogObject))
-			dispatch(notifyVoted(`blog '${blogObject.title}' by ${blogObject.author} has been liked`, 5))
-		} catch (error) {
-			console.log(error)
-			dispatch(notifyAnError(`Blog '${blogObject.title}' couldn't be liked`, 5))
-		}
-	}
-
-	const deleteBlog = async (blogObject) => {
-		if (
-			window.confirm(`Remove blog '${blogObject.title}' by ${blogObject.author}?`)
-		) {
-			try {
-				dispatch(removeBlog(blogObject))
-				dispatch(notifyDeleted(`blog '${blogObject.title}' by ${blogObject.author} has been deleted`, 5))
-			} catch (error) {
-				console.log(error)
-				dispatch(notifyAnError(`Blog '${blogObject.title}' couldn't be deleted`, 5))
-			}
-		} else {
-			console.log('Delete canceled')
-			return
-		}
-	}
-
 	return (
 		<div>
 			<h2>blogs</h2>
@@ -56,12 +29,7 @@ const Blogs = ({ blogs, user }) => {
 				<BlogsForm createBlog={createBlog} />
 			</Togglable>
 			{user && (
-				<BlogList
-					blogs={blogs}
-					likeBlog={likeBlog}
-					user={user}
-					deleteBlog={deleteBlog}
-				/>
+				<BlogList blogs={blogs} />
 			)}
 		</div>
 	)
