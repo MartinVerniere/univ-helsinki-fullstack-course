@@ -5,14 +5,13 @@ import { initializeUser } from './reducers/userReducer'
 import { Routes, Route, useMatch } from 'react-router-dom'
 import Users from './components/Users'
 import Blogs from './components/Blogs'
-import LoginForm from './components/LoginForm'
 import Notification from './components/Notification'
 import { loginUser, logoutUser } from './reducers/userReducer'
 import { notifyAnError } from './reducers/notificationReducer'
-import Togglable from './components/Togglable'
 import userService from './services/users'
 import User from './components/User'
 import Blog from './components/Blog'
+import Navigation from './components/Navigation'
 
 const App = () => {
 	const blogs = useSelector(({ blogs }) => blogs)
@@ -64,30 +63,27 @@ const App = () => {
 		fetchUsers()
 	}, [])
 
+	console.log('Current user:', user)
+
 	return (
 		<div>
+			<Navigation user={user} login={login} logout={handleLogout} />
 			<h1>Blogs</h1>
 			<Notification />
-
-			{!user &&
-				<Togglable buttonLabel="login" ref={null}>
-					<LoginForm login={login} />
-				</Togglable>
-			}
-
-			{user && (
-				<div>
-					<div>{user.name} logged in</div>
-					<button onClick={() => handleLogout()}>logout</button>
-
-					<Routes>
-						<Route path="/" element={<Blogs blogs={blogs} user={user} />} />
-						<Route path="/blogs/:id" element={<Blog selectedBlog={selectedBlog} user={user} />} />
-						<Route path="/users/" element={<Users users={users} />} />
-						<Route path="/users/:id" element={<User selectedUser={selectedUser} />} />
-					</Routes>
-				</div>
-			)}
+			<div>
+				{user
+					? (
+						<Routes>
+							<Route path="/" element={<div><h2>Welcome to the Blog App</h2></div>} />
+							<Route path="/blogs" element={<Blogs blogs={blogs} user={user} />} />
+							<Route path="/blogs/:id" element={<Blog selectedBlog={selectedBlog} user={user} />} />
+							<Route path="/users/" element={<Users users={users} />} />
+							<Route path="/users/:id" element={<User selectedUser={selectedUser} />} />
+						</Routes>
+					)
+					: <div>Please log in to view the content.</div>
+				}
+			</div>
 		</div>
 	)
 }
