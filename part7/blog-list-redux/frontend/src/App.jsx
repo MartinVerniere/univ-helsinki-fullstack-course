@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { initializeBlogs } from './reducers/blogReducer'
 import { initializeUser } from './reducers/userReducer'
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, useMatch } from 'react-router-dom'
 import Users from './components/Users'
 import Blogs from './components/Blogs'
 import LoginForm from './components/LoginForm'
@@ -11,6 +11,7 @@ import { loginUser, logoutUser } from './reducers/userReducer'
 import { notifyAnError } from './reducers/notificationReducer'
 import Togglable from './components/Togglable'
 import userService from './services/users'
+import User from './components/User'
 
 const App = () => {
 	const blogs = useSelector(({ blogs }) => blogs)
@@ -38,6 +39,13 @@ const App = () => {
 			console.error('Error fetching users:', error)
 		}
 	}
+
+	const match = useMatch('/users/:id')
+	const selectedUser = match
+		? users
+			? users.find(user => user.id === match.params.id)
+			: null
+		: null
 
 	useEffect(() => {
 		dispatch(initializeBlogs())
@@ -67,6 +75,7 @@ const App = () => {
 					<Routes>
 						<Route path="/" element={<Blogs blogs={blogs} user={user} />} />
 						<Route path="/users/" element={<Users users={users} />} />
+						<Route path="/users/:id" element={<User selectedUser={selectedUser} />} />
 					</Routes>
 				</div>
 			)}
