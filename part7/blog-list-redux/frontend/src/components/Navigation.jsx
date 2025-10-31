@@ -1,30 +1,23 @@
 import { Link } from 'react-router-dom'
-import Togglable from './Togglable'
-import LoginForm from './LoginForm'
 
-const Navigation = ({ user, login, logout }) => {
+const Navigation = ({ user, logout }) => {
 	const padding = {
 		paddingRight: 5
 	}
 
 	return (
 		<div>
-			<Link style={padding} to="/">home</Link>
-			<Link style={padding} to="/blogs">blogs</Link>
-			<Link style={padding} to="/users">users</Link>
-			{user
-				? (
-					<div>
-						<div>{user.name} logged in</div>
-						<button onClick={logout}>logout</button>
-					</div>
-				)
-				: (
-					<Togglable buttonLabel="login" ref={null}>
-						<LoginForm login={login} />
-					</Togglable>
-				)
-			}
+			<Link to="/">home</Link>{' '}
+			<Link to="/blogs">blogs</Link>{' '}
+			<Link to="/users">users</Link>{' '}
+			{user ? (
+				<>
+					<span>{user.name} logged in</span>{' '}
+					<button onClick={logout}>logout</button>
+				</>
+			) : (
+				<Link to="/login">login</Link>
+			)}
 		</div>
 	)
 }
