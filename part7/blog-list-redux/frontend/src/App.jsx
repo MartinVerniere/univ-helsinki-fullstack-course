@@ -7,12 +7,13 @@ import Users from './components/Users'
 import Blogs from './components/Blogs'
 import Notification from './components/Notification'
 import { loginUser, logoutUser } from './reducers/userReducer'
-import { notifyAnError } from './reducers/notificationReducer'
+import { notifyAction, notifyAnError } from './reducers/notificationReducer'
 import userService from './services/users'
 import User from './components/User'
 import Blog from './components/Blog'
 import Navigation from './components/Navigation'
 import LoginForm from './components/LoginForm'
+import { Container } from '@mui/material'
 
 const App = () => {
 	const blogs = useSelector(({ blogs }) => blogs)
@@ -24,6 +25,7 @@ const App = () => {
 	const login = async (credentials) => {
 		try {
 			await dispatch(loginUser(credentials))
+			dispatch(notifyAction(`welcome ${credentials.username}`, 5))
 		} catch (error) {
 			console.log(error)
 			dispatch(notifyAnError('invalid username or password', 5))
@@ -67,7 +69,7 @@ const App = () => {
 	console.log('Current user:', user)
 
 	return (
-		<div>
+		<Container>
 			<Navigation user={user} logout={handleLogout} />
 			<h1>Blogs Redux</h1>
 			<Notification />
@@ -88,7 +90,7 @@ const App = () => {
 					: <Navigate replace to="/login" />
 				}
 			</div>
-		</div>
+		</Container>
 	)
 }
 

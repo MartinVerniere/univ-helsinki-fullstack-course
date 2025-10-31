@@ -1,22 +1,21 @@
 import { Link } from 'react-router-dom'
+import { Paper, Table, TableBody, TableCell, TableContainer, TableRow } from '@mui/material'
 
 const BlogList = ({ blogs }) => {
-	const blogStyle = {
-		paddingTop: 10,
-		paddingLeft: 2,
-		border: 'solid',
-		borderWidth: 1,
-		marginBottom: 5,
-	}
-
 	return (
-		<div>
-			{blogs.map((blog) => (
-				<div style={blogStyle}>
-					<Link to={`/blogs/${blog.id}`}>{blog.title} {blog.author}</Link>
-				</div>
-			))}
-		</div>
+		<TableContainer component={Paper}>
+			<Table>
+				<TableBody>
+					{blogs.map(blog => (
+						<TableRow key={blog.id}>
+							<TableCell>
+								<Link to={`/blogs/${blog.id}`}>{blog.title} {blog.author}</Link>
+							</TableCell>
+						</TableRow>
+					))}
+				</TableBody>
+			</Table>
+		</TableContainer>
 	)
 }
 

@@ -1,6 +1,6 @@
 import { useDispatch } from 'react-redux'
 import { removeBlog, voteForBlog } from '../reducers/blogReducer'
-import { notifyAnError, notifyDeleted, notifyVoted } from '../reducers/notificationReducer'
+import { notifyAction, notifyAnError } from '../reducers/notificationReducer'
 import { Link } from 'react-router-dom'
 import CommentsForm from './CommentsForm'
 
@@ -12,7 +12,7 @@ const Blog = ({ selectedBlog, user }) => {
 		likeBlog({
 			id: selectedBlog.id,
 			user: selectedBlog.user.id,
-			likes: selectedBlog.likes + 1,
+			likes: selectedBlog.likes,
 			author: selectedBlog.author,
 			title: selectedBlog.title,
 			url: selectedBlog.url,
@@ -33,8 +33,8 @@ const Blog = ({ selectedBlog, user }) => {
 
 	const likeBlog = async (blogObject) => {
 		try {
-			dispatch(voteForBlog(blogObject))
-			dispatch(notifyVoted(`blog '${blogObject.title}' by ${blogObject.author} has been liked`, 5))
+			await dispatch(voteForBlog(blogObject))
+			await dispatch(notifyAction(`blog '${blogObject.title}' by ${blogObject.author} has been liked`, 5))
 		} catch (error) {
 			console.log(error)
 			dispatch(notifyAnError(`blog '${blogObject.title}' couldn't be liked`, 5))
@@ -46,8 +46,8 @@ const Blog = ({ selectedBlog, user }) => {
 			window.confirm(`Remove selectedBlog '${blogObject.title}' by ${blogObject.author}?`)
 		) {
 			try {
-				dispatch(removeBlog(blogObject))
-				dispatch(notifyDeleted(`blog '${blogObject.title}' by ${blogObject.author} has been deleted`, 5))
+				await dispatch(removeBlog(blogObject))
+				await dispatch(notifyAction(`blog '${blogObject.title}' by ${blogObject.author} has been deleted`, 5))
 			} catch (error) {
 				console.log(error)
 				dispatch(notifyAnError(`blog '${blogObject.title}' couldn't be deleted`, 5))

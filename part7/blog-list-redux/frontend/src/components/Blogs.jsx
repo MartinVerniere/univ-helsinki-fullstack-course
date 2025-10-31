@@ -1,6 +1,6 @@
 import { useDispatch } from 'react-redux'
 import { appendBlog } from '../reducers/blogReducer'
-import { notifyAnError, notifyCreated } from '../reducers/notificationReducer'
+import { notifyAction, notifyAnError } from '../reducers/notificationReducer'
 import BlogList from './BlogList'
 import { useRef } from 'react'
 import Togglable from './Togglable'
@@ -12,8 +12,8 @@ const Blogs = ({ blogs, user }) => {
 
 	const createBlog = async (blogObject) => {
 		try {
-			dispatch(appendBlog(blogObject))
-			dispatch(notifyCreated(`a new blog '${blogObject.title}' by ${blogObject.author} added`, 5))
+			await dispatch(appendBlog(blogObject))
+			await dispatch(notifyAction(`a new blog '${blogObject.title}' by ${blogObject.author} added`, 5))
 			blogFormRef.current.toggleVisibility()
 		} catch (error) {
 			console.log(error)

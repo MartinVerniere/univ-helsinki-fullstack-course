@@ -1,3 +1,4 @@
+import { TextField } from '@mui/material'
 import { useState } from 'react'
 
 const BlogsForm = ({ createBlog }) => {
@@ -19,36 +20,9 @@ const BlogsForm = ({ createBlog }) => {
 	}
 	return (
 		<form onSubmit={addBlog}>
-			<div>
-				<label>
-					title
-					<input
-						type="text"
-						value={title}
-						onChange={({ target }) => setTitle(target.value)}
-					/>
-				</label>
-			</div>
-			<div>
-				<label>
-					author
-					<input
-						type="text"
-						value={author}
-						onChange={({ target }) => setAuthor(target.value)}
-					/>
-				</label>
-			</div>
-			<div>
-				<label>
-					url
-					<input
-						type="text"
-						value={url}
-						onChange={({ target }) => setURL(target.value)}
-					/>
-				</label>
-			</div>
+			<div><TextField label="title" variant="filled" value={title} onChange={({ target }) => setTitle(target.value)} /></div>
+			<div><TextField label="author" variant="filled" value={author} onChange={({ target }) => setAuthor(target.value)} /></div>
+			<div><TextField label="url" variant="filled" value={url} onChange={({ target }) => setURL(target.value)} /></div>
 			<button type="submit">create</button>
 		</form>
 	)

@@ -1,7 +1,8 @@
 import { useState } from 'react'
-import { notifyAnError, notifyVoted } from '../reducers/notificationReducer'
+import { notifyAction, notifyAnError } from '../reducers/notificationReducer'
 import { commentOnBlog } from '../reducers/blogReducer'
 import { useDispatch } from 'react-redux'
+import { Button, TextField } from '@mui/material'
 
 const CommentsForm = ({ blog }) => {
 	const [comment, setComment] = useState('')
@@ -23,10 +24,10 @@ const CommentsForm = ({ blog }) => {
 		setComment('')
 	}
 
-	const addComment = (blogObject) => {
+	const addComment = async (blogObject) => {
 		try {
-			dispatch(commentOnBlog(blogObject))
-			dispatch(notifyVoted(`blog '${blogObject.title}' by ${blogObject.author} has a new comment '${blogObject.commentToAdd}'`, 5))
+			await dispatch(commentOnBlog(blogObject))
+			await dispatch(notifyAction(`blog '${blogObject.title}' by ${blogObject.author} has a new comment '${blogObject.commentToAdd}'`, 5))
 		} catch (error) {
 			console.log(error)
 			dispatch(notifyAnError(`comment '${blogObject.commentToAdd}' couldn't be added`, 5))
@@ -36,16 +37,9 @@ const CommentsForm = ({ blog }) => {
 	return (
 		<form onSubmit={addBlogComment}>
 			<div>
-				<label>
-					comment
-					<input
-						type="text"
-						value={comment}
-						onChange={({ target }) => setComment(target.value)}
-					/>
-				</label>
+				<TextField label="comment" variant="filled" value={comment} onChange={({ target }) => setComment(target.value)} />
 			</div>
-			<button type="submit">create</button>
+			<Button variant="contained" color="primary" type="submit">create</Button>
 		</form>
 	)
 }
