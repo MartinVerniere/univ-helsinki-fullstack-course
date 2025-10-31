@@ -75,6 +75,18 @@ const Blog = ({ selectedBlog, user }) => {
 						<button onClick={remove}>delete</button>
 					)}
 				</div>
+				<div className="comments">
+					<h2>comments</h2>
+					{selectedBlog.comments && selectedBlog.comments.length > 0 ? (
+						<ul>
+							{selectedBlog.comments.map((comment, index) => (
+								<li key={index}>{comment}</li>
+							))}
+						</ul>
+					) : (
+						<p>No comments exist for blog</p>
+					)}
+				</div>
 			</div>
 		</div>
 	)
