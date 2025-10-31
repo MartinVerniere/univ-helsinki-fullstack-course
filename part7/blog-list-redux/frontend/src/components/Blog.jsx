@@ -2,6 +2,7 @@ import { useDispatch } from 'react-redux'
 import { removeBlog, voteForBlog } from '../reducers/blogReducer'
 import { notifyAnError, notifyDeleted, notifyVoted } from '../reducers/notificationReducer'
 import { Link } from 'react-router-dom'
+import CommentsForm from './CommentsForm'
 
 const Blog = ({ selectedBlog, user }) => {
 	const dispatch = useDispatch()
@@ -77,6 +78,7 @@ const Blog = ({ selectedBlog, user }) => {
 				</div>
 				<div className="comments">
 					<h2>comments</h2>
+					<CommentsForm blog={selectedBlog} />
 					{selectedBlog.comments && selectedBlog.comments.length > 0 ? (
 						<ul>
 							{selectedBlog.comments.map((comment, index) => (

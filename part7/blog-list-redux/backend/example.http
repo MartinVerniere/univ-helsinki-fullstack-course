@@ -51,5 +51,5 @@ PUT http://localhost:3003/api/blogs/69010032ddc1d0ad180e7fc5/comments/ HTTP/1.1
 content-type: application/json
 
 {
-	"comment": "New comment added"
+	"commentToAdd": "New comment added"
 }

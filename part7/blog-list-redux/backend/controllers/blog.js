@@ -95,16 +95,11 @@ blogsRouter.put("/:id", async (request, response) => {
 
 blogsRouter.put("/:id/comments", async (request, response) => {
 	const { id } = request.params;
-	const { comment } = request.body;
-
-	console.log("id: ", id);
+	const { commentToAdd } = request.body;
 
 	const blogToUpdate = await Blog.findById(id);
-
 	if (!blogToUpdate) return response.status(404).end();
-
-	blogToUpdate.comments = blogToUpdate.comments.concat(comment);
-
+	blogToUpdate.comments = blogToUpdate.comments.concat(commentToAdd);
 	const updatedBlog = await blogToUpdate.save();
 
 	const blogWithUser = await updatedBlog.populate("user", {
