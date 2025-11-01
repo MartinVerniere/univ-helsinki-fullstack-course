@@ -1,0 +1,15 @@
+{
+  "name": "books-graphql",
+  "version": "1.0.0",
+  "description": "Books app using GraphQL",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@apollo/server": "^5.1.0",
+    "graphql": "^16.11.0"
+  }
+}
