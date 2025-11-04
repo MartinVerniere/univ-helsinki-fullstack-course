@@ -1,5 +1,6 @@
 const { ApolloServer } = require('@apollo/server')
 const { startStandaloneServer } = require('@apollo/server/standalone')
+const { GraphQLError } = require('graphql')
 
 const mongoose = require('mongoose')
 mongoose.set('strictQuery', false)
@@ -84,7 +85,17 @@ const resolvers = {
 			let author = await Author.findOne({ name: args.author })
 			if (!author) {
 				author = new Author({ name: args.author })
-				await author.save()
+				try {
+					await author.save()
+				} catch (error) {
+					throw new GraphQLError('Saving author on addBook failed - author name must be longer than 4 characters', {
+						extensions: {
+							code: 'BAD_USER_INPUT',
+							invalidArgs: args.author,
+							error
+						}
+					})
+				}
 			}
 
 			const newBook = new Book({
@@ -93,17 +104,43 @@ const resolvers = {
 				author: author._id,
 				genres: args.genres
 			})
-			const response = await newBook.save()
-			return response.populate('author')
+			try {
+				const response = await newBook.save()
+				return response.populate('author')
+			} catch (error) {
+				throw new GraphQLError('Saving book failed - book title must be longer than 4 characters', {
+					extensions: {
+						code: 'BAD_USER_INPUT',
+						invalidArgs: args.title,
+						error
+					}
+				})
+			}
 		},
 		editAuthor: async (root, args) => {
 			const authorToEdit = await Author.findOne({ name: args.name })
-			if (!authorToEdit) return null
+			if (!authorToEdit) {
+				throw new GraphQLError('Editing author failed - author doesnt exist', {
+					extensions: {
+						code: 'BAD_USER_INPUT',
+						invalidArgs: args.title
+					}
+				})
+			}
 
 			authorToEdit.born = args.setBornTo
-			const response = await authorToEdit.save()
-
-			return response
+			try {
+				const response = await authorToEdit.save()
+				return response
+			} catch (error) {
+				throw new GraphQLError('Editing author failed - new birthday must be a Number', {
+					extensions: {
+						code: 'BAD_USER_INPUT',
+						invalidArgs: args.title,
+						error
+					}
+				})
+			}
 		}
 	}
 }
