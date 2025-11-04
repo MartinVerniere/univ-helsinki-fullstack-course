@@ -21,29 +21,6 @@ mongoose.connect(MONGODB_URI)
 		console.log('error connection to MongoDB:', error.message)
 	})
 
-let persons = [
-	{
-		name: "Arto Hellas",
-		phone: "040-123543",
-		street: "Tapiolankatu 5 A",
-		city: "Espoo",
-		id: "3d594650-3436-11e9-bc57-8b80ba54c431"
-	},
-	{
-		name: "Matti Luukkainen",
-		phone: "040-432342",
-		street: "Malminkaari 10 A",
-		city: "Helsinki",
-		id: '3d599470-3436-11e9-bc57-8b80ba54c431'
-	},
-	{
-		name: "Venla Ruuska",
-		street: "Nallemäentie 22 C",
-		city: "Helsinki",
-		id: '3d599471-3436-11e9-bc57-8b80ba54c431'
-	},
-]
-
 const typeDefs = `
 	enum YesNo {
 		YES  
@@ -97,6 +74,9 @@ const typeDefs = `
 			username: String!
 			password: String!
 		): Token
+		addAsFriend(
+			name: String!
+		): User
 	}
 `
 
@@ -108,9 +88,7 @@ const resolvers = {
 			return Person.find({ phone: { $exists: args.phone === 'YES' } })
 		},
 		findPerson: async (root, args) => Person.findOne({ name: args.name }),
-		me: (root, args, context) => {
-			return context.currentUser
-		}
+		me: (root, args, context) => { return context.currentUser }
 	},
 	Person: {
 		address: (root) => {
@@ -121,10 +99,22 @@ const resolvers = {
 		}
 	},
 	Mutation: {
-		addPerson: async (root, args) => {
+		addPerson: async (root, args, context) => {
 			const person = new Person({ ...args })
+
+			const currentUser = context.currentUser
+			if (!currentUser) {
+				throw new GraphQLError('not authenticated', {
+					extensions: {
+						code: 'BAD_USER_INPUT',
+					}
+				})
+			}
+
 			try {
 				await person.save()
+				currentUser.friends = currentUser.friends.concat(person)
+				await currentUser.save()
 			} catch (error) {
 				throw new GraphQLError('Saving person failed', {
 					extensions: {
@@ -181,6 +171,24 @@ const resolvers = {
 			}
 
 			return { value: jwt.sign(userForToken, process.env.JWT_SECRET) }
+		},
+		addAsFriend: async (root, args, { currentUser }) => {
+			const isFriendAlready = (person) => currentUser.friends.map(f => f._id.toString()).includes(person._id.toString())
+
+			if (!currentUser) {
+				throw new GraphQLError('wrong credentials', {
+					extensions: { code: 'BAD_USER_INPUT' }
+				})
+			}
+
+			const person = await Person.findOne({ name: args.name })
+			if (!isFriendAlready(person)) {
+				currentUser.friends = currentUser.friends.concat(person)
+			}
+
+			await currentUser.save()
+
+			return currentUser
 		},
 	}
 }
