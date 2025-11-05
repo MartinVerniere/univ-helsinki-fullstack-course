@@ -115,6 +115,7 @@ const resolvers = {
 				await person.save()
 				currentUser.friends = currentUser.friends.concat(person)
 				await currentUser.save()
+				return currentUser
 			} catch (error) {
 				throw new GraphQLError('Saving person failed', {
 					extensions: {
@@ -130,6 +131,7 @@ const resolvers = {
 			person.phone = args.phone
 			try {
 				await person.save()
+				return person
 			} catch (error) {
 				throw new GraphQLError('Saving number failed', {
 					extensions: {
@@ -160,7 +162,7 @@ const resolvers = {
 			if (!user || args.password !== 'secret') {
 				throw new GraphQLError('wrong credentials', {
 					extensions: {
-						code: 'BAD_USER_INPUT'
+						code: 'BAD_USER_INPUT',
 					}
 				})
 			}
