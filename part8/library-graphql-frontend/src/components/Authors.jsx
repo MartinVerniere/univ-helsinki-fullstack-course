@@ -3,7 +3,6 @@ import { ALL_AUTHORS } from "./queries"
 import EditAuthor from "./EditAuthor"
 
 const Authors = (props) => {
-
 	if (!props.show) return null
 
 	const queryResponse = useQuery(ALL_AUTHORS)
