@@ -115,7 +115,7 @@ const resolvers = {
 				await person.save()
 				currentUser.friends = currentUser.friends.concat(person)
 				await currentUser.save()
-				return currentUser
+				return person
 			} catch (error) {
 				throw new GraphQLError('Saving person failed', {
 					extensions: {
