@@ -82,12 +82,12 @@ const typeDefs = `
 
 const resolvers = {
 	Query: {
-		personCount: () => Person.collection.countDocuments(),
-		allPersons: (root, args) => {
-			if (!args.phone) return Person.find({})
-			return Person.find({ phone: { $exists: args.phone === 'YES' } })
+		personCount: async () => await Person.collection.countDocuments(),
+		allPersons: async (root, args) => {
+			if (!args.phone) return await Person.find({})
+			return await Person.find({ phone: { $exists: args.phone === 'YES' } })
 		},
-		findPerson: async (root, args) => Person.findOne({ name: args.name }),
+		findPerson: async (root, args) => await Person.findOne({ name: args.name }),
 		me: (root, args, context) => { return context.currentUser }
 	},
 	Person: {
