@@ -1,13 +1,13 @@
 const { ApolloServer } = require('@apollo/server')
 const { startStandaloneServer } = require('@apollo/server/standalone')
 const { GraphQLError } = require('graphql')
+const jwt = require('jsonwebtoken')
 
 const mongoose = require('mongoose')
 mongoose.set('strictQuery', false)
 const Person = require('./models/Person')
 const User = require('./models/User')
 require('dotenv').config()
-const jwt = require('jsonwebtoken')
 
 const MONGODB_URI = process.env.MONGODB_URI
 
@@ -115,7 +115,6 @@ const resolvers = {
 				await person.save()
 				currentUser.friends = currentUser.friends.concat(person)
 				await currentUser.save()
-				return person
 			} catch (error) {
 				throw new GraphQLError('Saving person failed', {
 					extensions: {
@@ -125,13 +124,14 @@ const resolvers = {
 					}
 				})
 			}
+
+			return person
 		},
 		editNumber: async (root, args) => {
 			const person = await Person.findOne({ name: args.name })
 			person.phone = args.phone
 			try {
 				await person.save()
-				return person
 			} catch (error) {
 				throw new GraphQLError('Saving number failed', {
 					extensions: {
@@ -141,6 +141,7 @@ const resolvers = {
 					}
 				})
 			}
+			return person
 		},
 		createUser: async (root, args) => {
 			const user = new User({ username: args.username })

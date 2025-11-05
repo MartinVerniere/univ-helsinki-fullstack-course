@@ -5,11 +5,7 @@ import { ALL_PERSONS } from './components/queries'
 import { useState } from 'react'
 import PhoneForm from './components/PhoneForm'
 import LoginForm from './components/LoginForm'
-
-const Notify = ({ errorMessage }) => {
-	if (!errorMessage) return null
-	return <div style={{ color: 'red' }}> {errorMessage} </div>
-}
+import Notify from './components/Notify'
 
 const App = () => {
 	const [token, setToken] = useState(null)
