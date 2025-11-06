@@ -2,8 +2,10 @@ import { useState } from "react"
 import { useMutation } from '@apollo/client/react'
 import { ALL_AUTHORS, EDIT_BIRTHDAY } from "./queries"
 
-const EditAuthor = ({ authors }) => {
-	const [name, setName] = useState(authors[0].name)
+const EditAuthor = (props) => {
+	if (!props.authors || !props.token) return null
+
+	const [name, setName] = useState(props.authors[0].name)
 	const [birthday, setBirthday] = useState('')
 
 	const [changeBirthday] = useMutation(EDIT_BIRTHDAY, {
@@ -12,16 +14,14 @@ const EditAuthor = ({ authors }) => {
 		]
 	})
 
-	const submit = (event) => {
+	const submit = async (event) => {
 		event.preventDefault()
 
-		const queryResponse = changeBirthday({ variables: { name, birthday: parseInt(birthday) } })
+		const queryResponse = await changeBirthday({ variables: { name, birthday: parseInt(birthday) } })
 		console.log(queryResponse)
 
 		setBirthday('')
 	}
-
-	if (!authors) return null
 
 	return (
 		<div>
@@ -29,7 +29,7 @@ const EditAuthor = ({ authors }) => {
 
 			<form onSubmit={submit}>
 				<select onChange={({ target }) => setName(target.value)}>
-					{authors.map(author =>
+					{props.authors.map(author =>
 						<option key={author.id} value={author.name}>{author.name}</option>
 					)}
 				</select>

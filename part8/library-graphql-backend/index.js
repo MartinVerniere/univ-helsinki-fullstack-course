@@ -136,8 +136,7 @@ const resolvers = {
 				genres: args.genres
 			})
 			try {
-				const response = await newBook.save()
-				return response.populate('author')
+				await newBook.save()
 			} catch (error) {
 				throw new GraphQLError('Saving book failed - book title must be longer than 4 characters', {
 					extensions: {
@@ -147,6 +146,7 @@ const resolvers = {
 					}
 				})
 			}
+			return await newBook.populate('author')
 		},
 		editAuthor: async (root, args, context) => {
 			const currentUser = context.currentUser
@@ -170,8 +170,8 @@ const resolvers = {
 
 			authorToEdit.born = args.setBornTo
 			try {
-				const response = await authorToEdit.save()
-				return response
+				await authorToEdit.save()
+				
 			} catch (error) {
 				throw new GraphQLError('Editing author failed - new birthday must be a Number', {
 					extensions: {
@@ -181,6 +181,7 @@ const resolvers = {
 					}
 				})
 			}
+			return authorToEdit
 		},
 		createUser: async (root, args) => {
 			const user = new User({ username: args.username, favouriteGenre: args.favouriteGenre })

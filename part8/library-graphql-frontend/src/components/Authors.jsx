@@ -9,6 +9,7 @@ const Authors = (props) => {
 	if (queryResponse.loading) return <div>loading...</div>
 	const authors = queryResponse.data.allAuthors
 
+	console.log(authors, props.token)
 	return (
 		<div>
 			<h2>authors</h2>
@@ -28,7 +29,7 @@ const Authors = (props) => {
 					))}
 				</tbody>
 			</table>
-			{authors && <EditAuthor authors={authors} />}
+			<EditAuthor authors={authors} token={props.token} />
 		</div>
 	)
 }
