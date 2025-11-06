@@ -9,7 +9,6 @@ const Authors = (props) => {
 	if (queryResponse.loading) return <div>loading...</div>
 	const authors = queryResponse.data.allAuthors
 
-	console.log(authors, props.token)
 	return (
 		<div>
 			<h2>authors</h2>
