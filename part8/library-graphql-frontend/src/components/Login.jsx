@@ -3,8 +3,6 @@ import { useMutation } from "@apollo/client/react"
 import { LOGIN } from './queries'
 
 const LoginForm = (props) => {
-	if (!props.show) return null
-
 	const [username, setUsername] = useState('')
 	const [password, setPassword] = useState('')
 	const [login, result] = useMutation(LOGIN)
@@ -16,6 +14,8 @@ const LoginForm = (props) => {
 			localStorage.setItem('library-user-token', token)
 		}
 	}, [result.data])
+
+	if (!props.show) return null
 
 	const submit = async (event) => {
 		event.preventDefault()

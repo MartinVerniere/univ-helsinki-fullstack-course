@@ -3,9 +3,8 @@ import { useMutation } from '@apollo/client/react'
 import { ALL_AUTHORS, EDIT_BIRTHDAY } from "./queries"
 
 const EditAuthor = (props) => {
-	if (!props.authors || !props.token) return null
-
-	const [name, setName] = useState(props.authors[0].name)
+	
+	const [name, setName] = useState('')
 	const [birthday, setBirthday] = useState('')
 
 	const [changeBirthday] = useMutation(EDIT_BIRTHDAY, {
@@ -13,6 +12,8 @@ const EditAuthor = (props) => {
 			{ query: ALL_AUTHORS }
 		]
 	})
+
+	if (!props.authors || !props.token) return null
 
 	const submit = async (event) => {
 		event.preventDefault()
