@@ -3,6 +3,10 @@ export const typeDefs = `
 		YES  
 		NO
 	}
+
+	type Subscription {
+		personAdded: Person!
+	}    
 	
 	type Address {  
 		street: String!  
