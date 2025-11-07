@@ -20,6 +20,8 @@ const LoginForm = (props) => {
 	const submit = async (event) => {
 		event.preventDefault()
 		await login({ variables: { username, password } })
+		setUsername('')
+		setPassword('')
 	}
 
 	return (
