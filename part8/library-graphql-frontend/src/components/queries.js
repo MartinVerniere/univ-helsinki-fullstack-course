@@ -26,6 +26,12 @@ query allBooks($author: String, $genre: String) {
 }
 `
 
+export const ALL_GENRES = gql`
+query {
+	allGenres
+}
+`
+
 export const USER_DATA = gql`
 query {
 	me {

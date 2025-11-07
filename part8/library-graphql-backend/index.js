@@ -53,6 +53,7 @@ const typeDefs = `
 		authorCount: Int!
 		allBooks(author: String, genre: String): [Book!]!
 		allAuthors: [Author!]!
+		allGenres: [String!]!
 		me: User
 	}
 
@@ -97,6 +98,10 @@ const resolvers = {
 			if (args.genre) return await Book.find({ genres: args.genre }).populate('author')
 		},
 		allAuthors: async () => await Author.find({}),
+		allGenres: async () => {
+			const books = await Book.find({})
+			return [...new Set(books.flatMap(book => book.genres))]
+		},
 		me: (root, args, context) => context.currentUser
 	},
 	Author: {
@@ -171,7 +176,7 @@ const resolvers = {
 			authorToEdit.born = args.setBornTo
 			try {
 				await authorToEdit.save()
-				
+
 			} catch (error) {
 				throw new GraphQLError('Editing author failed - new birthday must be a Number', {
 					extensions: {
