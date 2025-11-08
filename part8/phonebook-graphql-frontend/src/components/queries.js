@@ -13,35 +13,35 @@ const PERSON_DETAILS = gql`
 `
 
 export const ALL_PERSONS = gql`
-query {
-  allPersons {
-	...PersonDetails
-  }
-  ${PERSON_DETAILS}
-}
+	query {
+		allPersons {
+			...PersonDetails
+		}
+	}
+	${PERSON_DETAILS}
 `
 
 export const CREATE_PERSON = gql`
 mutation createPerson($name: String!, $street: String!, $city: String!, $phone: String) {
-  addPerson(
-	name: $name,
-	street: $street,
-	city: $city,
-	phone: $phone
-  ) {
-	...PersonDetails
-  }
-  ${PERSON_DETAILS}
-}
+		addPerson(
+			name: $name,
+			street: $street,
+			city: $city,
+			phone: $phone
+		) {
+			...PersonDetails
+		}
+	}
+	${PERSON_DETAILS}
 `
 
 export const FIND_PERSON = gql`
-  query findPersonByName($nameToSearch: String!) {
-	findPerson(name: $nameToSearch) {
-		...PersonDetails
+	query findPersonByName($nameToSearch: String!) {
+		findPerson(name: $nameToSearch) {
+			...PersonDetails
+		}
 	}
-	${PERSON_DETAILS}
-  }
+  ${PERSON_DETAILS}
 `
 
 export const EDIT_NUMBER = gql`
@@ -49,8 +49,8 @@ export const EDIT_NUMBER = gql`
     editNumber(name: $name, phone: $phone) {
 		...PersonDetails
 	}
-	${PERSON_DETAILS}
   }
+  ${PERSON_DETAILS}
 `
 
 export const LOGIN = gql`
@@ -59,4 +59,13 @@ export const LOGIN = gql`
 			value
 		}
 	}
+`
+
+export const PERSON_ADDED = gql`
+  subscription {
+    personAdded {
+      ...PersonDetails
+    }
+  }
+  ${PERSON_DETAILS}
 `
