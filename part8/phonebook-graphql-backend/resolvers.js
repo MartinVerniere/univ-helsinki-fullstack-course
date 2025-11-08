@@ -2,10 +2,11 @@ const { GraphQLError } = require('graphql')
 const jwt = require('jsonwebtoken')
 const Person = require('./models/Person')
 const User = require('./models/User')
+
 const { PubSub } = require('graphql-subscriptions')
 const pubsub = new PubSub()
 
-export const resolvers = {
+const resolvers = {
 	Query: {
 		personCount: async () => await Person.collection.countDocuments(),
 		allPersons: async (root, args) => {
@@ -123,7 +124,9 @@ export const resolvers = {
 	},
 	Subscription: {
 		personAdded: {
-			subscribe: () => pubsub.asyncIterator('PERSON_ADDED')
+			subscribe: () => pubsub.asyncIterableIterator('PERSON_ADDED')
 		},
 	},
 }
+
+module.exports = { resolvers }

@@ -1,6 +1,6 @@
 const { ApolloServer } = require('@apollo/server')
 const { ApolloServerPluginDrainHttpServer } = require('@apollo/server/plugin/drainHttpServer')
-const { expressMiddleware } = require('@apollo/server/express4')
+const { expressMiddleware } = require('@as-integrations/express5');
 const { makeExecutableSchema } = require('@graphql-tools/schema')
 
 const http = require('http')
@@ -18,7 +18,7 @@ const { typeDefs } = require('./schema')
 const { resolvers } = require('./resolvers')
 
 const { WebSocketServer } = require('ws')
-const { useServer } = require('graphql-ws/lib/use/ws')
+const { useServer } = require('graphql-ws/use/ws')
 
 require('dotenv').config()
 
