@@ -10,8 +10,9 @@ const resolvers = {
 	Query: {
 		personCount: async () => await Person.collection.countDocuments(),
 		allPersons: async (root, args) => {
-			if (!args.phone) return await Person.find({})
-			return await Person.find({ phone: { $exists: args.phone === 'YES' } })
+			console.log('Person.find')
+			if (!args.phone) return await Person.find({}).populate('friendOf')
+			return await Person.find({ phone: { $exists: args.phone === 'YES' } }).populate('friendOf')
 		},
 		findPerson: async (root, args) => await Person.findOne({ name: args.name }),
 		me: (root, args, context) => { return context.currentUser }
