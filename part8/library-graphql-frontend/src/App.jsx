@@ -38,7 +38,7 @@ const App = () => {
 	useSubscription(BOOK_ADDED, {
 		onData: ({ data, client }) => {
 			const addedBook = data.data.bookAdded
-			updateCache(client.cache, { query: ALL_BOOKS }, addedBook)
+			updateCache(client.cache, { query: ALL_BOOKS, variables: { genre: null } }, addedBook)
 			window.alert(`A book ${addedBook.title} has been added`)
 		}
 	})

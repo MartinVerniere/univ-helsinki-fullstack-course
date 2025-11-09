@@ -41,18 +41,18 @@ export const ALL_BOOKS = gql`
 `
 
 export const ALL_GENRES = gql`
-query {
-	allGenres
-}
+	query {
+		allGenres
+	}
 `
 
 export const USER_DATA = gql`
-query {
-	me {
-		username
-		favouriteGenre
+	query {
+		me {
+			username
+			favouriteGenre
+		}
 	}
-}
 `
 
 export const CREATE_BOOK = gql`
