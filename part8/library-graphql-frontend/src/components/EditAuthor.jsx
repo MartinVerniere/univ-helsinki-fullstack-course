@@ -3,8 +3,8 @@ import { useMutation } from '@apollo/client/react'
 import { ALL_AUTHORS, EDIT_BIRTHDAY } from "./queries"
 
 const EditAuthor = (props) => {
-	
-	const [name, setName] = useState('')
+
+	const [name, setName] = useState(props.authors ? props.authors[0].name : '')
 	const [birthday, setBirthday] = useState('')
 
 	const [changeBirthday] = useMutation(EDIT_BIRTHDAY, {
