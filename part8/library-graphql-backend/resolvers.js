@@ -25,15 +25,15 @@ const resolvers = {
 			}
 			if (args.genre) return await Book.find({ genres: args.genre }).populate('author')
 		},
-		allAuthors: async () => await Author.find({}),
+		allAuthors: async () => {
+			console.log("author find")
+			return await Author.find({})
+		},
 		allGenres: async () => {
 			const books = await Book.find({})
 			return [...new Set(books.flatMap(book => book.genres))]
 		},
 		me: (root, args, context) => context.currentUser
-	},
-	Author: {
-		bookCount: async (root) => await Book.countDocuments({ author: root._id })
 	},
 	Mutation: {
 		addBook: async (root, args, context) => {
@@ -48,7 +48,7 @@ const resolvers = {
 
 			let author = await Author.findOne({ name: args.author })
 			if (!author) {
-				author = new Author({ name: args.author })
+				author = new Author({ name: args.author, bookCount: 0 })
 				try {
 					await author.save()
 				} catch (error) {
@@ -70,6 +70,9 @@ const resolvers = {
 			})
 			try {
 				await newBook.save()
+
+				author.bookCount = author.bookCount + 1
+				await author.save()
 			} catch (error) {
 				throw new GraphQLError('Saving book failed - book title must be longer than 4 characters', {
 					extensions: {
@@ -108,7 +111,6 @@ const resolvers = {
 			authorToEdit.born = args.setBornTo
 			try {
 				await authorToEdit.save()
-
 			} catch (error) {
 				throw new GraphQLError('Editing author failed - new birthday must be a Number', {
 					extensions: {
