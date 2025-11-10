@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-	"ts-node": "ts-node"
+	"ts-node": "ts-node",
+	"calculateBmi": "npm run ts-node bmiCalculator.ts"
   },
   "author": "Martin Verniere",
   "license": "ISC",
