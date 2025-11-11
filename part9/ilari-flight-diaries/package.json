@@ -1,0 +1,25 @@
+{
+  "name": "ilari-flight-diaries",
+  "version": "1.0.0",
+  "description": "Ilari´s flight diaries",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "tsc": "tsc"
+  },
+  "author": "Martin Verniere",
+  "license": "ISC",
+  "devDependencies": {
+    "@eslint/js": "^9.39.1",
+    "@stylistic/eslint-plugin": "^5.5.0",
+    "@types/eslint__js": "^9.14.0",
+    "@types/express": "^5.0.5",
+    "eslint": "^9.39.1",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.46.4"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
