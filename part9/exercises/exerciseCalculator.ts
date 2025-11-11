@@ -1,6 +1,6 @@
-interface CalculatorValues {
-	value1: number[];
-	value2: number;
+export interface CalculatorValues {
+	daily_exercises: number[];
+	target: number;
 }
 
 const parseArgumentsExercise = (args: string[]): CalculatorValues => {
@@ -11,8 +11,8 @@ const parseArgumentsExercise = (args: string[]): CalculatorValues => {
 
 	if (isArrayOfNumbers && !isNaN(Number(args[args.length - 1]))) {
 		return {
-			value1: array,
-			value2: Number(args[args.length - 1])
+			daily_exercises: array,
+			target: Number(args[args.length - 1])
 		}
 	} else {
 		throw new Error('Provided values were not numbers!');
@@ -20,7 +20,7 @@ const parseArgumentsExercise = (args: string[]): CalculatorValues => {
 }
 
 interface CalculatorResponse {
-	periodLenght: number;
+	periodLength: number;
 	trainingDays: number;
 	success: boolean;
 	rating: 1 | 2 | 3;
@@ -29,26 +29,28 @@ interface CalculatorResponse {
 	average: number;
 }
 
-const exercisesCalculator = (dailyExerciseHours: number[], targetAmount: number): CalculatorResponse => {
-	const periodLenght = dailyExerciseHours.length;
+export const exercisesCalculator = (dailyExerciseHours: number[], targetAmount: number): CalculatorResponse => {
+	const periodLength = dailyExerciseHours.length;
 	const trainingDays = dailyExerciseHours.filter((element) => element > 0).length;
 	const target = targetAmount;
 	const totalHours = dailyExerciseHours.reduce((accumulatedHours, currentHours) => accumulatedHours + currentHours, 0)
-	const average = totalHours / periodLenght;
+	const average = totalHours / periodLength;
 	const success = average >= targetAmount ? true : false;
 	const rating = success ? average > 4 ? 1 : 2 : 3;
 	const ratingDescription = success ? average > 4 ? "Impressive training" : "Good training, but it could improve in its average daily hours" : "Failed training schedule";
 
-	return { periodLenght, trainingDays, success, rating, ratingDescription, target, average };
+	return { periodLength, trainingDays, success, rating, ratingDescription, target, average };
 }
 
-try {
-	const { value1, value2 } = parseArgumentsExercise(process.argv);
-	console.log(exercisesCalculator(value1, value2));
-} catch (error: unknown) {
-	let errorMessage = 'Something bad happened.'
-	if (error instanceof Error) {
-		errorMessage += ' Error: ' + error.message;
+if (require.main === module) {
+	try {
+		const { daily_exercises, target } = parseArgumentsExercise(process.argv);
+		console.log(exercisesCalculator(daily_exercises, target));
+	} catch (error: unknown) {
+		let errorMessage = 'Something bad happened.'
+		if (error instanceof Error) {
+			errorMessage += ' Error: ' + error.message;
+		}
+		console.log(errorMessage);
 	}
-	console.log(errorMessage);
 }
