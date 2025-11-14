@@ -1,5 +1,4 @@
 import express, { Response } from 'express';
-
 import diagnosisService from '../services/diagnosesService';
 import { DiagnosesEntry } from '../types';
 
