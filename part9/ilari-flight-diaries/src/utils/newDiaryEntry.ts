@@ -1,14 +1,11 @@
-import { NewDiaryEntry, Weather } from '../types';
+import { NewDiaryEntry, Visibility, Weather } from '../types';
 
 const isString = (text: unknown): text is string => {
 	return typeof text === 'string' || text instanceof String;
 };
 
 const parseComment = (comment: unknown): string => {
-	if (!comment || !isString(comment)) {
-		throw new Error('Incorrect or missing comment');
-	}
-
+	if (!isString(comment)) throw new Error('Incorrect comment');
 	return comment;
 };
 
@@ -17,33 +14,43 @@ const isDate = (date: string): boolean => {
 };
 
 const parseDate = (date: unknown): string => {
-	if (!date || !isString(date) || !isDate(date)) {
-		throw new Error('Incorrect or missing date: ' + date);
-	}
+	if (!isString(date) || !isDate(date)) throw new Error('Incorrect date: ' + date);
 	return date;
 };
 
-const isWeather = (str: string): str is Weather => {
-	return ['sunny', 'rainy', 'cloudy', 'stormy'].includes(str);
+const isWeather = (param: string): param is Weather => {
+	return Object.values(Weather).map(value => value.toString()).includes(param);
 };
 
 const parseWeather = (weather: unknown): Weather => {
-	if (!weather || !isString(weather) || !isWeather(weather)) {
-		throw new Error('Incorrect or missing weather: ' + weather);
-	}
+	if (!isString(weather) || !isWeather(weather)) throw new Error('Incorrect weather: ' + weather);
 	return weather;
 };
 
-const toNewDiaryEntry = (object: unknown): NewDiaryEntry => {
-	console.log(object); // now object is no longer unused
-	const newEntry: NewDiaryEntry = {
-		weather: 'cloudy', // fake the return value
-		visibility: 'great',
-		date: '2022-1-1',
-		comment: 'fake news'
-	};
+const isVisibility = (param: string): param is Visibility => {
+	return Object.values(Visibility).map(value => value.toString()).includes(param);
+};
 
-	return newEntry;
+const parseVisibility = (visibility: unknown): Visibility => {
+	if (!isString(visibility) || !isVisibility(visibility)) throw new Error('Incorrect visibility: ' + visibility);
+	return visibility;
+};
+
+const toNewDiaryEntry = (object: unknown): NewDiaryEntry => {
+	if (!object || typeof object !== 'object') throw new Error('Incorrect data');
+
+	if ('comment' in object && 'date' in object && 'weather' in object && 'visibility' in object) {
+		const newEntry: NewDiaryEntry = {
+			weather: parseWeather(object.weather),
+			visibility: parseVisibility(object.visibility),
+			date: parseDate(object.date),
+			comment: parseComment(object.comment)
+		};
+
+		return newEntry;
+	}
+
+	throw new Error('Incorrect data: some fields are missing');
 };
 
 export default toNewDiaryEntry;
