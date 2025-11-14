@@ -1,8 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import express, { Response } from 'express';
 
 import diaryService from '../services/diaryService';
 import { NonSensitiveDiaryEntry } from '../types';
+import toNewDiaryEntry from '../utils/newDiaryEntry';
 
 const router = express.Router();
 
@@ -21,13 +21,9 @@ router.get('/:id', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-	const { date, weather, visibility, comment } = req.body;
-	const addedEntry = diaryService.addDiary({
-		date,
-		weather,
-		visibility,
-		comment,
-	});
+	const newDiaryEntry = toNewDiaryEntry(req.body);
+
+	const addedEntry = diaryService.addDiary(newDiaryEntry);
 	res.json(addedEntry);
 });
 
