@@ -1,9 +1,6 @@
-import { useState } from 'react';
-
-interface Note {
-	id: string,
-	content: string
-}
+import { useEffect, useState } from 'react';
+import { createNote, getAllNotes } from './services/noteService';
+import type { Note } from './types';
 
 const App = () => {
 	const [newNote, setNewNote] = useState('');
@@ -11,12 +8,19 @@ const App = () => {
 		{ id: '1', content: 'testing' }
 	]);
 
-	const noteCreation = (event: React.SyntheticEvent) => {
-		event.preventDefault()
-		const noteToAdd = { content: newNote, id: String(notes.length + 1) }
-		setNotes(notes.concat(noteToAdd));
+	const noteCreation = async (event: React.SyntheticEvent) => {
+		event.preventDefault();
+		const data = await createNote({ content: newNote })
+		setNotes(notes.concat(data));
 		setNewNote('')
 	};
+
+	useEffect(() => {
+		getAllNotes()
+			.then(data => {
+				setNotes(data)
+			})
+	}, [])
 
 	return (
 		<div>
