@@ -1,10 +1,10 @@
-import Content from "./components/Content";
+import Content, { type CoursePart } from "./components/Content";
 import Header from "./components/Header";
 import Total from "./components/Total";
 
 const App = () => {
 	const courseName = "Half Stack application development";
-	const courseParts = [
+	const courseParts: CoursePart[] = [
 		{
 			name: "Fundamentals",
 			exerciseCount: 10,

@@ -19,10 +19,10 @@ interface CoursePartBackground extends CoursePartBase {
 	kind: "background"
 }
 
-type CoursePart = CoursePartBasic | CoursePartGroup | CoursePartBackground;
+export type CoursePart = CoursePartBasic | CoursePartGroup | CoursePartBackground;
 
 interface ContentProps {
-	courseParts: CoursePart[]
+	courseParts: Array<CoursePart>
 }
 
 const CourseInfo = (props: CoursePart) => <p> {props.name} {props.exerciseCount} </p>
@@ -30,7 +30,7 @@ const CourseInfo = (props: CoursePart) => <p> {props.name} {props.exerciseCount}
 const Content = (props: ContentProps) => {
 	return (
 		<div>
-			{props.courseParts.map(coursePart => <CourseInfo name={coursePart.name} exerciseCount={coursePart.exerciseCount} />)}
+			{props.courseParts.map(coursePart => <CourseInfo {...coursePart} />)}
 		</div>
 	);
 }
