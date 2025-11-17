@@ -14,9 +14,16 @@ export enum Visibility {
 }
 
 export interface DiaryEntry {
-	id: 'number',
+	id: number,
 	weather: Weather,
 	visibility: Visibility,
-	date: 'string',
-	comment: 'string'
+	date: string,
+	comment: string
+}
+
+export type NewDiaryEntry = {
+	weather: string,
+	visibility: string,
+	date: string,
+	comment: string
 }

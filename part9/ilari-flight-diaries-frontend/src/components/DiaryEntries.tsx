@@ -20,7 +20,7 @@ export const DiaryEntries = (props: DiaryEntriesProps) => {
 	return (
 		<div>
 			<h2> Diary Entries: </h2>
-			{props.diaryEntries.map(diaryEntry => <DiaryEntry {...diaryEntry} />)}
+			{props.diaryEntries.map(diaryEntry => <DiaryEntry key={diaryEntry.id} {...diaryEntry} />)}
 		</div>
 	);
 };
