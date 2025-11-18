@@ -46,7 +46,7 @@ function App() {
 					const errors = response.data.error;
 					const fullMessage = errors
 						.map(error => `• ${error.path[0]}: ${error.message}`)
-						.join('<br />');
+						.join('\n');
 
 					showNotification(fullMessage, true);
 				} else {
