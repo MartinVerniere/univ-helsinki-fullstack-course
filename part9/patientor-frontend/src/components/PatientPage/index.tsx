@@ -1,12 +1,13 @@
 import { Female, Male } from "@mui/icons-material";
-import { Patient } from "../../types";
+import { Diagnosis, Patient } from "../../types";
 import { Box, Divider, Typography } from "@mui/material";
 
 interface PatientPageProps {
 	patient: Patient
+	diagnoses: Diagnosis[]
 }
 
-export const PatientPage = ({ patient }: PatientPageProps) => {
+export const PatientPage = ({ patient, diagnoses }: PatientPageProps) => {
 	return (
 		<Box>
 			<Typography variant="h4" component="h1">
@@ -22,9 +23,7 @@ export const PatientPage = ({ patient }: PatientPageProps) => {
 					<Typography variant="body1"> {entry.date} {entry.description} </Typography>
 					{entry.diagnosisCodes && (
 						<ul>
-							{entry.diagnosisCodes.map(code => (
-								<li key={code}>{code}</li>
-							))}
+							{entry.diagnosisCodes.map(code => <li key={code}>{code} {diagnoses.find(diagnosis => diagnosis.code === code)?.name}</li>)}
 						</ul>
 					)}
 				</div>
