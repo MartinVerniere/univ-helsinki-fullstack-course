@@ -1,11 +1,10 @@
-import { Female, Male, Title } from "@mui/icons-material";
+import { Female, Male } from "@mui/icons-material";
 import { Patient } from "../../types";
 import { Box, Typography } from "@mui/material";
 
 interface PatientPageProps {
 	patient: Patient
 }
-
 
 export const PatientPage = ({ patient }: PatientPageProps) => {
 	return (
