@@ -7,6 +7,10 @@ export interface DiagnosesEntry {
 	latin?: string
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export interface Entry {
+}
+
 export enum Gender {
 	Male = 'male',
 	Female = 'female',
@@ -15,4 +19,4 @@ export enum Gender {
 
 export type NewPatientEntry = zod.infer<typeof NewPatientEntrySchema>;
 export interface PatientEntry extends NewPatientEntry { id: string; }
-export type NonSensitivePatientEntry = Omit<PatientEntry, 'ssn'>;
+export type NonSensitivePatientEntry = Omit<PatientEntry, 'ssn' | 'entries'>;

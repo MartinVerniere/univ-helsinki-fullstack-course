@@ -6,5 +6,6 @@ export const NewPatientEntrySchema = zod.object({
 	dateOfBirth: zod.iso.date(),
 	ssn: zod.string(),
 	gender: zod.enum(Gender),
-	occupation: zod.string()
+	occupation: zod.string(),
+	entries: zod.string().array()
 });
