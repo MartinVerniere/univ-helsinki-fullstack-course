@@ -1,6 +1,6 @@
 import { Female, Male } from "@mui/icons-material";
 import { Patient } from "../../types";
-import { Box, Typography } from "@mui/material";
+import { Box, Divider, Typography } from "@mui/material";
 
 interface PatientPageProps {
 	patient: Patient
@@ -12,8 +12,23 @@ export const PatientPage = ({ patient }: PatientPageProps) => {
 			<Typography variant="h4" component="h1">
 				{patient.name} {patient.gender === "male" ? <Male /> : patient.gender === "female" ? <Female /> : null}
 			</Typography>
-			{patient.ssn && <Typography variant="body1">ssn: {patient.ssn}</Typography>}
+			<Divider />
+			{patient.ssn && <Typography variant="body1"> ssn: {patient.ssn} </Typography>}
 			<Typography variant="body1"> occupation: {patient.occupation} </Typography>
+			<Divider />
+			<Typography variant="h5">entries</Typography>
+			{patient.entries.map(entry => (
+				<div key={entry.id}>
+					<Typography variant="body1"> {entry.date} {entry.description} </Typography>
+					{entry.diagnosisCodes && (
+						<ul>
+							{entry.diagnosisCodes.map(code => (
+								<li key={code}>{code}</li>
+							))}
+						</ul>
+					)}
+				</div>
+			))}
 		</Box>
 	);
 };
