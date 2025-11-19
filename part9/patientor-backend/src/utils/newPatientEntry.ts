@@ -1,5 +1,6 @@
 import { z as zod } from 'zod';
 import { Gender } from "../types";
+import { EntrySchema } from './EntrySchema';
 
 export const NewPatientEntrySchema = zod.object({
 	name: zod.string(),
@@ -7,5 +8,5 @@ export const NewPatientEntrySchema = zod.object({
 	ssn: zod.string(),
 	gender: zod.enum(Gender),
 	occupation: zod.string(),
-	entries: zod.string().array()
+	entries: zod.array(EntrySchema)
 });
