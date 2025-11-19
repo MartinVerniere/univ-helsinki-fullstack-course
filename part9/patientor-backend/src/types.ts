@@ -1,6 +1,20 @@
 import { z as zod } from 'zod';
 import { NewPatientEntrySchema } from "./utils/newPatientEntry";
 
+type UnionOmit<T, K extends string | number | symbol> = T extends unknown ? Omit<T, K> : never;
+
+export enum Gender {
+	Male = 'male',
+	Female = 'female',
+	Other = 'other',
+}
+
+export interface DiagnosesEntry {
+	code: string,
+	name: string,
+	latin?: string
+}
+
 interface BaseEntry {
 	id: string;
 	description: string;
@@ -26,18 +40,6 @@ export type Entry =
 	| OccupationalHealthcareEntry
 	| HealthCheckEntry;
 
-export interface DiagnosesEntry {
-	code: string,
-	name: string,
-	latin?: string
-}
-
-export enum Gender {
-	Male = 'male',
-	Female = 'female',
-	Other = 'other',
-}
-
 export type NewPatientEntry = zod.infer<typeof NewPatientEntrySchema>;
 export interface PatientEntry extends NewPatientEntry { id: string; }
-export type NonSensitivePatientEntry = Omit<PatientEntry, 'ssn' | 'entries'>;
+export type NonSensitivePatientEntry = UnionOmit<PatientEntry, 'ssn' | 'entries'>;
