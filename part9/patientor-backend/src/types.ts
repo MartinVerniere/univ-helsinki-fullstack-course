@@ -1,6 +1,7 @@
 import { z as zod } from 'zod';
 import { NewPatientEntrySchema } from "./utils/newPatientEntry";
 import { DiagnosesEntrySchema } from './utils/DiagnosisEntry';
+import { EntrySchemaWithoutId } from './utils/EntrySchema';
 
 type UnionOmit<T, K extends string | number | symbol> = T extends unknown ? Omit<T, K> : never;
 
@@ -16,6 +17,10 @@ export enum HealthCheckRating {
 	"HighRisk" = 2,
 	"CriticalRisk" = 3
 }
+
+//If i dont do it like this, and do Omit<zod.infer<typeof EntrySchema>, 'id'>, it flattens type for some reason into one of three strings
+export type NewEntryEntry = zod.infer<typeof EntrySchemaWithoutId>;
+export type EntryEntry = NewEntryEntry & { id: string };
 
 export type DiagnosesEntry = zod.infer<typeof DiagnosesEntrySchema>;
 export type NewPatientEntry = zod.infer<typeof NewPatientEntrySchema>;

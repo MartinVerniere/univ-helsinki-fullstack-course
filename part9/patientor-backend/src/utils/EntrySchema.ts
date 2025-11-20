@@ -40,3 +40,14 @@ export const EntrySchema = zod.discriminatedUnion("type", [
 	OccupationalHealthcareEntrySchema,
 	HealthCheckEntrySchema,
 ]);
+
+
+const HospitalEntrySchemaWithoutId = HospitalEntrySchema.omit({ id: true });
+const OccupationalEntrySchemaWithoutId = OccupationalHealthcareEntrySchema.omit({ id: true });
+const HealthCheckEntrySchemaWithoutId = HealthCheckEntrySchema.omit({ id: true });
+
+export const EntrySchemaWithoutId = zod.discriminatedUnion("type", [
+	HospitalEntrySchemaWithoutId,
+	OccupationalEntrySchemaWithoutId,
+	HealthCheckEntrySchemaWithoutId,
+]);
