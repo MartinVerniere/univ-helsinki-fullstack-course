@@ -1,8 +1,9 @@
 import { SyntheticEvent, useState } from "react";
-import { EntryFormValues, HealthCheckRating } from "../../types";
-import { Alert, Box, Button, ButtonGroup, Chip, FormLabel, Grid, Stack, TextField, ToggleButton, ToggleButtonGroup } from "@mui/material";
+import { Diagnosis, EntryFormValues, HealthCheckRating } from "../../types";
+import { Alert, Box, Button, ButtonGroup, FormLabel, Grid, MenuItem, OutlinedInput, Select, SelectChangeEvent, TextField, ToggleButton, ToggleButtonGroup } from "@mui/material";
 
 interface EntryFormProps {
+	diagnoses: Diagnosis[],
 	onSubmit: (values: EntryFormValues) => void;
 	notification: string | null;
 	error: boolean;
@@ -42,7 +43,7 @@ const HospitalFormFields = ({ dischargeDate, dischargeCriteria, setDischargeDate
 
 			<Grid container spacing={2} sx={{ mt: 1 }}>
 				<Grid item xs={6}>
-					<TextField label="Date" variant="standard" size="small" fullWidth value={dischargeDate} onChange={e => setDischargeDate(e.target.value)} InputLabelProps={{ shrink: true }} />
+					<TextField type="date" label="Date" variant="standard" size="small" fullWidth value={dischargeDate} onChange={e => setDischargeDate(e.target.value)} InputLabelProps={{ shrink: true }} />
 				</Grid>
 
 				<Grid item xs={6}>
@@ -64,11 +65,11 @@ const OccupationlaHealthcareFormFields = ({ employerName, sickLeaveStartDate, si
 
 			<Grid container spacing={2} sx={{ mt: 1 }}>
 				<Grid item xs={6}>
-					<TextField label="Start date" variant="standard" size="small" fullWidth value={sickLeaveStartDate} onChange={e => setSickLeaveStartDate(e.target.value)} InputLabelProps={{ shrink: true }} />
+					<TextField type="date" label="Start date" variant="standard" size="small" fullWidth value={sickLeaveStartDate} onChange={e => setSickLeaveStartDate(e.target.value)} InputLabelProps={{ shrink: true }} />
 				</Grid>
 
 				<Grid item xs={6}>
-					<TextField label="End date" variant="standard" size="small" fullWidth value={sickLeaveEndDate} onChange={e => setSickLeaveEndDate(e.target.value)} InputLabelProps={{ shrink: true }} />
+					<TextField type="date" label="End date" variant="standard" size="small" fullWidth value={sickLeaveEndDate} onChange={e => setSickLeaveEndDate(e.target.value)} InputLabelProps={{ shrink: true }} />
 				</Grid>
 			</Grid>
 		</Grid>
@@ -89,7 +90,7 @@ const HealthCheckFormFields = ({ healthcheckRating, setHealthcheckRating }: Heal
 	);
 };
 
-export const AddEntryForm = ({ onSubmit, notification, error }: EntryFormProps) => {
+export const AddEntryForm = ({ diagnoses, onSubmit, notification, error }: EntryFormProps) => {
 	const [formType, setFormType] = useState<FormTypes>(FormTypes.Hospital);
 
 	const changeFormType = (_event: unknown, newValue: FormTypes) => {
@@ -101,13 +102,6 @@ export const AddEntryForm = ({ onSubmit, notification, error }: EntryFormProps) 
 	const [description, setDescription] = useState("");
 	const [specialist, setSpecialist] = useState("");
 	const [diagnosisCodes, setDiagnosisCodes] = useState<string[]>([]);
-	const [diagnosisToAdd, setDiagnosisToAdd] = useState("");
-
-	const addDiagnosisCode = () => {
-		if (!diagnosisToAdd.trim()) return;
-		setDiagnosisCodes(previousCodes => [...previousCodes, diagnosisToAdd.trim()]);
-		setDiagnosisToAdd("");
-	};
 
 	//Hospital form
 	const [dischargeDate, setDischargeDate] = useState("");
@@ -141,7 +135,6 @@ export const AddEntryForm = ({ onSubmit, notification, error }: EntryFormProps) 
 		setDescription("");
 		setSpecialist("");
 		setDiagnosisCodes([]);
-		setDiagnosisToAdd("");
 
 		clearHospitalForm();
 		clearOccupationalHealthcareForm();
@@ -214,7 +207,7 @@ export const AddEntryForm = ({ onSubmit, notification, error }: EntryFormProps) 
 				<Grid container spacing={2}>
 					<Grid item xs={12}>
 						<FormLabel>Date</FormLabel>
-						<TextField variant="standard" size="small" fullWidth value={date} onChange={e => setDate(e.target.value)} InputLabelProps={{ shrink: true }} />
+						<TextField type="date" variant="standard" size="small" fullWidth value={date} onChange={e => setDate(e.target.value)} InputLabelProps={{ shrink: true }} />
 					</Grid>
 					<Grid item xs={12}>
 						<FormLabel>Description</FormLabel>
@@ -228,15 +221,13 @@ export const AddEntryForm = ({ onSubmit, notification, error }: EntryFormProps) 
 					<Grid item xs={12}>
 						<FormLabel>Diagnosis Codes</FormLabel>
 
-						<Stack direction="row" spacing={1} sx={{ mt: 1, mb: 1 }}>
-							{diagnosisCodes.map((code, i) => (<Chip key={i} label={code} />))}
-						</Stack>
-
-						<Stack direction="row" spacing={1}>
-							<TextField variant="standard" size="small" fullWidth value={diagnosisToAdd} onChange={e => setDiagnosisToAdd(e.target.value)} />
-							<Button onClick={addDiagnosisCode} variant="outlined"> Add </Button>
-							<Button type="button" color="error" onClick={() => setDiagnosisCodes([])}>Clear</Button>
-						</Stack>
+						<Select multiple value={diagnosisCodes} onChange={(event: SelectChangeEvent<string[]>) => setDiagnosisCodes(event.target.value as string[])} input={<OutlinedInput label="Diagnosis Codes" />} >
+							{diagnoses.map((diagnosis) => (
+								<MenuItem key={diagnosis.code} value={diagnosis.code} >
+									{diagnosis.name}
+								</MenuItem>
+							))}
+						</Select>
 					</Grid>
 
 					{formType === FormTypes.Hospital &&

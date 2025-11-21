@@ -176,7 +176,7 @@ export const PatientPage = ({ patient, diagnoses }: PatientPageProps) => {
 			{patient.ssn && <Typography variant="body1"> ssn: {patient.ssn} </Typography>}
 			<Typography variant="body1"> occupation: {patient.occupation} </Typography>
 			<Divider />
-			<AddEntryForm onSubmit={addEntry} notification={notification} error={error} />
+			<AddEntryForm diagnoses={diagnoses} onSubmit={addEntry} notification={notification} error={error} />
 			<Typography variant="h5">entries</Typography>
 			{entriesArray.map(entry => (
 				<div key={entry.id}>
