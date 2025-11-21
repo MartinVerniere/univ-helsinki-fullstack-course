@@ -1,6 +1,10 @@
 import { Favorite, FavoriteBorder, Female, HeartBroken, Male, MedicalServices, Work } from "@mui/icons-material";
-import { Diagnosis, Entry, Patient, HospitalEntry, OccupationalHealthcareEntry, HealthCheckEntry, HealthCheckRating } from "../../types";
+import { Diagnosis, Entry, Patient, HospitalEntry, OccupationalHealthcareEntry, HealthCheckEntry, HealthCheckRating, EntryFormValues } from "../../types";
 import { Box, Divider, Typography } from "@mui/material";
+import { AddEntryForm } from "./AddEntryForm";
+import { useState } from "react";
+import axios from "axios";
+import entryService from "../../services/entries";
 
 interface PatientPageProps {
 	patient: Patient
@@ -25,6 +29,16 @@ interface HealthCheckProps {
 interface EntryDetailsProps {
 	entry: Entry
 	diagnoses: Diagnosis[]
+}
+
+interface ValidationErrorItem {
+	code: string;
+	message: string;
+	path: string[];
+}
+
+interface ValidationErrorResponse {
+	error: ValidationErrorItem[];
 }
 
 const assertNever = (value: never): never => {
@@ -110,6 +124,44 @@ const EntryDetails = ({ entry, diagnoses }: EntryDetailsProps) => {
 };
 
 export const PatientPage = ({ patient, diagnoses }: PatientPageProps) => {
+	const [entriesArray, setEntriesArray] = useState<Array<Entry>>(patient.entries);
+	const [notification, setNotification] = useState<string | null>(null);
+	const [error, setError] = useState(false);
+
+	const showNotification = (message: string, isError = false) => {
+		setError(isError);
+		setNotification(message);
+
+		setTimeout(() => {
+			setNotification(null);
+		}, 5000);
+	};
+
+	const addEntry = async (newEntry: EntryFormValues) => {
+		try {
+			const entry = await entryService.create(patient.id, newEntry);
+			setEntriesArray(entriesArray.concat(entry));
+		} catch (error: unknown) {
+			if (axios.isAxiosError<ValidationErrorResponse>(error)) {
+				const response = error.response;
+
+				console.log(response);
+				if (response) {
+					const errors = response.data.error;
+					const fullMessage = errors
+						.map(error => `• ${error.path[0]}: ${error.message}`)
+						.join('\n');
+
+					showNotification(fullMessage, true);
+				} else {
+					console.log("Error accessing axios response");
+				}
+			} else {
+				console.error("Not axios error:", error);
+			}
+		}
+	};
+
 	return (
 		<Box>
 			<Typography variant="h4" component="h1">
@@ -119,8 +171,9 @@ export const PatientPage = ({ patient, diagnoses }: PatientPageProps) => {
 			{patient.ssn && <Typography variant="body1"> ssn: {patient.ssn} </Typography>}
 			<Typography variant="body1"> occupation: {patient.occupation} </Typography>
 			<Divider />
+			<AddEntryForm onSubmit={addEntry} notification={notification} error={error} />
 			<Typography variant="h5">entries</Typography>
-			{patient.entries.map(entry => (
+			{entriesArray.map(entry => (
 				<div key={entry.id}>
 					<EntryDetails entry={entry} diagnoses={diagnoses} />
 				</div>

@@ -1,9 +1,9 @@
 import express, { NextFunction, Request, Response } from 'express';
 import { z as zod } from 'zod';
 import patientsService from '../services/patientsService';
-import { DiagnosesEntry, EntryEntry, NewEntryEntry, NewPatientEntry, PatientEntry } from '../types';
+import { EntryEntry, NewEntryEntry, NewPatientEntry, PatientEntry } from '../types';
 import { NewPatientEntrySchema } from '../utils/newPatientEntry';
-import { EntrySchema } from '../utils/EntrySchema';
+import { EntrySchemaWithoutId } from '../utils/EntrySchema';
 
 const router = express.Router();
 
@@ -18,20 +18,11 @@ const newPatientParser = (req: Request, _res: Response, next: NextFunction) => {
 
 const parseNewEntry = (req: Request, _res: Response, next: NextFunction) => {
 	try {
-		req.body = EntrySchema.parse(req.body);
+		req.body = EntrySchemaWithoutId.parse(req.body);
 		next();
 	} catch (error: unknown) {
 		next(error);
 	}
-};
-
-const parseDiagnosisCodes = (object: unknown): Array<DiagnosesEntry['code']> => {
-	if (!object || typeof object !== 'object' || !('diagnosisCodes' in object)) {
-		// we will just trust the data to be in correct form
-		return [] as Array<DiagnosesEntry['code']>;
-	}
-
-	return object.diagnosisCodes as Array<DiagnosesEntry['code']>;
 };
 
 const errorMiddleware = (error: unknown, _req: Request, res: Response, next: NextFunction) => {
@@ -51,7 +42,7 @@ router.post('/', newPatientParser, (req: Request<unknown, unknown, NewPatientEnt
 	res.json(addedEntry);
 });
 
-router.post('/:id/entries', parseNewEntry, parseDiagnosisCodes, (req: Request<{ id: string }, unknown, NewEntryEntry>, res: Response<EntryEntry>, next: NextFunction) => {
+router.post('/:id/entries', parseNewEntry, (req: Request<{ id: string }, unknown, NewEntryEntry>, res: Response<EntryEntry>, next: NextFunction) => {
 	const patientId = req.params.id;
 
 	try {

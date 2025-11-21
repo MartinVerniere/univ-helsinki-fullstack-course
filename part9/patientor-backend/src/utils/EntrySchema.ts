@@ -4,13 +4,13 @@ import { HealthCheckRating } from '../types';
 const BaseEntrySchema = zod.object({
 	id: zod.string(),
 	description: zod.string(),
-	date: zod.string(), // or zod.iso.date() if you prefer
+	date: zod.iso.date(),
 	specialist: zod.string(),
 	diagnosisCodes: zod.array(zod.string()).optional(),
 });
 
 const DischargeSchema = zod.object({
-	date: zod.string(),
+	date: zod.iso.date(),
 	criteria: zod.string(),
 });
 
@@ -20,8 +20,8 @@ const HospitalEntrySchema = BaseEntrySchema.extend({
 });
 
 const SickLeaveSchema = zod.object({
-	startDate: zod.string(),
-	endDate: zod.string(),
+	startDate: zod.iso.date(),
+	endDate: zod.iso.date(),
 });
 
 const OccupationalHealthcareEntrySchema = BaseEntrySchema.extend({
