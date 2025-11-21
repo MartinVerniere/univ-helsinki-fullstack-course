@@ -1,6 +1,6 @@
 import { SyntheticEvent, useState } from "react";
-import { EntryFormValues } from "../../types";
-import { Alert, Box, Button, ButtonGroup, Chip, FormLabel, Grid, Stack, TextField } from "@mui/material";
+import { EntryFormValues, HealthCheckRating } from "../../types";
+import { Alert, Box, Button, ButtonGroup, Chip, FormLabel, Grid, Stack, TextField, ToggleButton, ToggleButtonGroup } from "@mui/material";
 
 interface EntryFormProps {
 	onSubmit: (values: EntryFormValues) => void;
@@ -8,20 +8,132 @@ interface EntryFormProps {
 	error: boolean;
 }
 
+enum FormTypes {
+	"Hospital" = 0,
+	"OccupationalHealthcare" = 1,
+	"HealthCheck" = 2,
+}
+
+interface HospitalFormFieldsProps {
+	dischargeDate: string,
+	dischargeCriteria: string,
+	setDischargeDate: (value: string) => void,
+	setDischargeCriteria: (value: string) => void
+}
+
+interface OccupationalHealthcareFormFieldsProps {
+	employerName: string,
+	setEmployerName: (value: string) => void,
+	sickLeaveStartDate: string,
+	setSickLeaveStartDate: (value: string) => void,
+	sickLeaveEndDate: string,
+	setSickLeaveEndDate: (value: string) => void,
+}
+
+interface HealtCheckFormFieldsProps {
+	healthcheckRating: HealthCheckRating,
+	setHealthcheckRating: (value: HealthCheckRating) => void
+}
+
+const HospitalFormFields = ({ dischargeDate, dischargeCriteria, setDischargeDate, setDischargeCriteria }: HospitalFormFieldsProps) => {
+	return (
+		<Grid item xs={12}>
+			<FormLabel>Discharge</FormLabel>
+
+			<Grid container spacing={2} sx={{ mt: 1 }}>
+				<Grid item xs={6}>
+					<TextField label="Date" variant="standard" size="small" fullWidth value={dischargeDate} onChange={e => setDischargeDate(e.target.value)} InputLabelProps={{ shrink: true }} />
+				</Grid>
+
+				<Grid item xs={6}>
+					<TextField label="Criteria" variant="standard" size="small" fullWidth value={dischargeCriteria} onChange={e => setDischargeCriteria(e.target.value)} InputLabelProps={{ shrink: true }} />
+				</Grid>
+			</Grid>
+		</Grid>
+	);
+};
+
+const OccupationlaHealthcareFormFields = ({ employerName, sickLeaveStartDate, sickLeaveEndDate, setEmployerName, setSickLeaveStartDate, setSickLeaveEndDate }: OccupationalHealthcareFormFieldsProps) => {
+	return (
+		<Grid item xs={12}>
+			<Grid item xs={12} sx={{ mb: 1 }}>
+				<TextField label="Employer Name" variant="standard" size="small" fullWidth value={employerName} onChange={e => setEmployerName(e.target.value)} InputLabelProps={{ shrink: true }} />
+			</Grid>
+
+			<FormLabel>Sick Leave</FormLabel>
+
+			<Grid container spacing={2} sx={{ mt: 1 }}>
+				<Grid item xs={6}>
+					<TextField label="Start date" variant="standard" size="small" fullWidth value={sickLeaveStartDate} onChange={e => setSickLeaveStartDate(e.target.value)} InputLabelProps={{ shrink: true }} />
+				</Grid>
+
+				<Grid item xs={6}>
+					<TextField label="End date" variant="standard" size="small" fullWidth value={sickLeaveEndDate} onChange={e => setSickLeaveEndDate(e.target.value)} InputLabelProps={{ shrink: true }} />
+				</Grid>
+			</Grid>
+		</Grid>
+	);
+};
+
+const HealthCheckFormFields = ({ healthcheckRating, setHealthcheckRating }: HealtCheckFormFieldsProps) => {
+	return (
+		<Grid item xs={12}>
+			<FormLabel>Health Check</FormLabel>
+
+			<Grid container spacing={2} sx={{ mt: 1 }}>
+				<Grid item xs={6}>
+					<TextField label="Rating" variant="standard" size="small" fullWidth value={healthcheckRating} onChange={e => setHealthcheckRating(Number(e.target.value) as HealthCheckRating)} InputLabelProps={{ shrink: true }} />
+				</Grid>
+			</Grid>
+		</Grid>
+	);
+};
+
 export const AddEntryForm = ({ onSubmit, notification, error }: EntryFormProps) => {
+	const [formType, setFormType] = useState<FormTypes>(FormTypes.Hospital);
+
+	const changeFormType = (_event: unknown, newValue: FormTypes) => {
+		clearForm();
+		setFormType(newValue);
+	};
+
 	const [date, setDate] = useState("");
 	const [description, setDescription] = useState("");
 	const [specialist, setSpecialist] = useState("");
 	const [diagnosisCodes, setDiagnosisCodes] = useState<string[]>([]);
 	const [diagnosisToAdd, setDiagnosisToAdd] = useState("");
 
-	const [dischargeDate, setDischargeDate] = useState("");
-	const [dischargeCriteria, setDischargeCriteria] = useState("");
-
 	const addDiagnosisCode = () => {
 		if (!diagnosisToAdd.trim()) return;
 		setDiagnosisCodes(previousCodes => [...previousCodes, diagnosisToAdd.trim()]);
 		setDiagnosisToAdd("");
+	};
+
+	//Hospital form
+	const [dischargeDate, setDischargeDate] = useState("");
+	const [dischargeCriteria, setDischargeCriteria] = useState("");
+
+	const clearHospitalForm = () => {
+		setDischargeDate("");
+		setDischargeCriteria("");
+	};
+
+	//OccupationalHealthcare form
+	const [employerName, setEmployerName] = useState("");
+	const [sickLeaveStartDate, setSickLeaveStartDate] = useState("");
+	const [sickLeaveEndDate, setSickLeaveEndDate] = useState("");
+
+	const clearOccupationalHealthcareForm = () => {
+		setEmployerName("");
+		setSickLeaveStartDate("");
+		setSickLeaveEndDate("");
+	};
+
+	// HealthCheck form
+	const [healthcheckRating, setHealthcheckRating] = useState<HealthCheckRating>(HealthCheckRating.Healthy);
+
+	const clearHealthCheckForm = () => {
+		setHealthcheckRating(HealthCheckRating.Healthy);
 	};
 
 	const clearForm = () => {
@@ -30,32 +142,73 @@ export const AddEntryForm = ({ onSubmit, notification, error }: EntryFormProps) 
 		setSpecialist("");
 		setDiagnosisCodes([]);
 		setDiagnosisToAdd("");
-		setDischargeDate("");
-		setDischargeCriteria("");
+
+		clearHospitalForm();
+		clearOccupationalHealthcareForm();
+		clearHealthCheckForm();
 	};
 
 	const addEntry = (event: SyntheticEvent) => {
 		event.preventDefault();
 
-		const newEntry: EntryFormValues = {
-			type: "Hospital",
-			date,
-			description,
-			specialist,
-			diagnosisCodes,
-			discharge: {
-				date: dischargeDate,
-				criteria: dischargeCriteria
-			}
-		} as EntryFormValues;
+		switch (formType) {
+			case FormTypes.Hospital:
+				const newEntryHospital: EntryFormValues = {
+					type: "Hospital",
+					date,
+					description,
+					specialist,
+					diagnosisCodes,
+					discharge: {
+						date: dischargeDate,
+						criteria: dischargeCriteria
+					}
+				} as EntryFormValues;
 
-		onSubmit(newEntry);
+				onSubmit(newEntryHospital);
+				break;
+			case FormTypes.OccupationalHealthcare:
+				const newEntryOccupationalHealthcare: EntryFormValues = {
+					type: "OccupationalHealthcare",
+					date,
+					description,
+					specialist,
+					diagnosisCodes,
+					employerName: employerName,
+					sickLeave: {
+						startDate: sickLeaveStartDate,
+						endDate: sickLeaveEndDate
+					}
+				} as EntryFormValues;
+
+				onSubmit(newEntryOccupationalHealthcare);
+				break;
+			case FormTypes.HealthCheck:
+				const newEntryHealthCheck: EntryFormValues = {
+					type: "HealthCheck",
+					date,
+					description,
+					specialist,
+					diagnosisCodes,
+					healthCheckRating: healthcheckRating
+				} as EntryFormValues;
+
+				onSubmit(newEntryHealthCheck);
+				break;
+		}
+
 		clearForm();
 	};
 
 	return (
 		<form onSubmit={addEntry}>
 			{notification && <Alert severity={error ? "error" : "success"}>{notification}</Alert>}
+
+			<ToggleButtonGroup value={formType} exclusive color="primary" size="medium" onChange={changeFormType}>
+				<ToggleButton value={FormTypes.Hospital}>Hospital</ToggleButton>
+				<ToggleButton value={FormTypes.OccupationalHealthcare}>Occupational Healthcare</ToggleButton>
+				<ToggleButton value={FormTypes.HealthCheck}>Health Check</ToggleButton>
+			</ToggleButtonGroup>
 
 			<Box component="section" sx={{ p: 2, border: "2px dashed grey", mt: 2 }}>
 				<Grid container spacing={2}>
@@ -86,19 +239,30 @@ export const AddEntryForm = ({ onSubmit, notification, error }: EntryFormProps) 
 						</Stack>
 					</Grid>
 
-					<Grid item xs={12}>
-						<FormLabel>Discharge</FormLabel>
-
-						<Grid container spacing={2} sx={{ mt: 1 }}>
-							<Grid item xs={6}>
-								<TextField label="Date" variant="standard" size="small" fullWidth value={dischargeDate} onChange={e => setDischargeDate(e.target.value)} InputLabelProps={{ shrink: true }} />
-							</Grid>
-
-							<Grid item xs={6}>
-								<TextField label="Criteria" variant="standard" size="small" fullWidth value={dischargeCriteria} onChange={e => setDischargeCriteria(e.target.value)} />
-							</Grid>
-						</Grid>
-					</Grid>
+					{formType === FormTypes.Hospital &&
+						<HospitalFormFields
+							dischargeDate={dischargeDate}
+							setDischargeDate={setDischargeDate}
+							dischargeCriteria={dischargeCriteria}
+							setDischargeCriteria={setDischargeCriteria}
+						/>
+					}
+					{formType === FormTypes.OccupationalHealthcare &&
+						<OccupationlaHealthcareFormFields
+							employerName={employerName}
+							setEmployerName={setEmployerName}
+							sickLeaveStartDate={sickLeaveStartDate}
+							setSickLeaveStartDate={setSickLeaveStartDate}
+							sickLeaveEndDate={sickLeaveEndDate}
+							setSickLeaveEndDate={setSickLeaveEndDate}
+						/>
+					}
+					{formType === FormTypes.HealthCheck &&
+						<HealthCheckFormFields
+							healthcheckRating={healthcheckRating}
+							setHealthcheckRating={setHealthcheckRating}
+						/>
+					}
 
 					<Grid item xs={12}>
 						<ButtonGroup>

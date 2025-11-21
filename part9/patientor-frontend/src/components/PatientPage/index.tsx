@@ -149,8 +149,13 @@ export const PatientPage = ({ patient, diagnoses }: PatientPageProps) => {
 				if (response) {
 					const errors = response.data.error;
 					const fullMessage = errors
-						.map(error => `• ${error.path[0]}: ${error.message}`)
-						.join('\n');
+						.map(issue => {
+							const path = issue.path.length
+								? issue.path.join(".")
+								: null;
+							return path ? `• ${path}: ${issue.message}` : `• ${issue.message}`;
+						})
+						.join("\n");
 
 					showNotification(fullMessage, true);
 				} else {
