@@ -1,10 +1,8 @@
-import { FlexboxExample } from './FlexBoxExample';
+import { FlexboxExample } from './examples/FlexBoxExample';
 
 const Main = () => {
 	return (
-		<>
-			<FlexboxExample />
-		</>
+		<FlexboxExample />
 	);
 };
 
