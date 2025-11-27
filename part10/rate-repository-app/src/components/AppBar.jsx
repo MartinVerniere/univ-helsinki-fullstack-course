@@ -34,7 +34,8 @@ const styles = StyleSheet.create({
 	},
 	scroll: {
 		flexDirection: 'row',
-		gap: 10
+		gap: 10,
+		paddingHorizontal: 10
 	},
 	text: {
 		color: theme.colors.textTertiary
