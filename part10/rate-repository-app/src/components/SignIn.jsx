@@ -1,17 +1,30 @@
 import { useFormik } from "formik";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import theme from "../theme";
+import * as yup from 'yup';
 
 const initialValues = {
 	username: '',
 	password: '',
 };
 
+const validationSchema = yup.object().shape({
+	username: yup
+		.string()
+		.required('Username is required'),
+	password: yup
+		.string()
+		.required('Password is required'),
+});
+
 const SignIn = () => {
-	const onSubmit = (values) => console.log("Tried logging in:", values.username, values.password)
+	const onSubmit = (values) => !formik.isValid
+		? console.log("Errors on login:", formik.errors)
+		: console.log("Tried logging in:", values.username, values.password);
 
 	const formik = useFormik({
 		initialValues,
+		validationSchema,
 		onSubmit,
 	});
 
@@ -19,17 +32,23 @@ const SignIn = () => {
 		<View style={styles.column}>
 			<TextInput
 				placeholder="Username"
-				style={styles.input}
+				style={formik.touched.username && formik.errors.username ? styles.inputError : styles.input}
 				value={formik.values.username}
 				onChangeText={formik.handleChange('username')}
 			/>
+			{formik.touched.username && formik.errors.username && (
+				<Text style={styles.errorText}>{formik.errors.username}</Text>
+			)}
 			<TextInput
 				secureTextEntry
 				placeholder="Password"
-				style={styles.input}
+				style={formik.touched.password && formik.errors.password ? styles.inputError : styles.input}
 				value={formik.values.password}
 				onChangeText={formik.handleChange('password')}
 			/>
+			{formik.touched.password && formik.errors.password && (
+				<Text style={styles.errorText}>{formik.errors.password}</Text>
+			)}
 			<Pressable onPress={formik.handleSubmit} style={styles.button}>
 				<Text style={styles.text}>Sign in</Text>
 			</Pressable>
@@ -50,6 +69,12 @@ const styles = StyleSheet.create({
 		borderRadius: 5,
 		borderColor: theme.colors.textSecondary,
 	},
+	inputError: {
+		borderWidth: 1,
+		padding: 10,
+		borderRadius: 5,
+		borderColor: theme.colors.error,
+	},
 	button: {
 		backgroundColor: theme.colors.primary,
 		padding: 10,
@@ -59,6 +84,9 @@ const styles = StyleSheet.create({
 		color: theme.colors.textTertiary,
 		fontSize: theme.fontSizes.subheading,
 		fontWeight: theme.fontWeights.bold
+	},
+	errorText: {
+		color: theme.colors.error,
 	}
 });
 

@@ -6,7 +6,8 @@ const theme = {
 		primary: '#0366d6',
 		background: '#24292e',
 		backgroundSecondary: '#e1e4e8',
-		backgroundTertiary: '#ffffff'
+		backgroundTertiary: '#ffffff',
+		error: '#d73a4a',
 	},
 	fontSizes: {
 		body: 14,
