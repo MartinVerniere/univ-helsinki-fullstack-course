@@ -1,8 +1,12 @@
-import { FlexboxExample } from './examples/FlexBoxExample';
+import AppBar from './AppBar';
+import RepositoryList from './RepositoryList';
 
 const Main = () => {
 	return (
-		<FlexboxExample />
+		<>
+			<AppBar />
+			<RepositoryList />
+		</>
 	);
 };
 
