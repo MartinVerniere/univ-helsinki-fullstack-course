@@ -5,6 +5,8 @@ const theme = {
 		textTertiary: '#ffffff',
 		primary: '#0366d6',
 		background: '#24292e',
+		backgroundSecondary: '#e1e4e8',
+		backgroundTertiary: '#ffffff'
 	},
 	fontSizes: {
 		body: 14,
