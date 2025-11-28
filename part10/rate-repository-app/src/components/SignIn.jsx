@@ -81,11 +81,14 @@ const styles = StyleSheet.create({
 		alignItems: 'center'
 	},
 	text: {
-		color: theme.colors.textTertiary,
+		fontFamily: theme.fonts,
 		fontSize: theme.fontSizes.subheading,
+		color: theme.colors.textTertiary,
 		fontWeight: theme.fontWeights.bold
 	},
 	errorText: {
+		fontFamily: theme.fonts,
+		fontSize: theme.fontSizes.body,
 		color: theme.colors.error,
 	}
 });

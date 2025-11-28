@@ -72,19 +72,19 @@ const RepositoryItemMainInfo = ({ item }) => {
 const RepositoryItemStatsInfo = ({ item }) => {
 	return (
 		<View style={styles.statsRow}>
-			<View style={styles.column}>
+			<View style={styles.statsColumn}>
 				<Text style={styles.textBold}>{formatCount(item.stargazersCount)}</Text>
 				<Text style={styles.text} >Stars</Text>
 			</View>
-			<View style={styles.column}>
+			<View style={styles.statsColumn}>
 				<Text style={styles.textBold}>{formatCount(item.forksCount)}</Text>
 				<Text style={styles.text} >Forks</Text>
 			</View>
-			<View style={styles.column}>
+			<View style={styles.statsColumn}>
 				<Text style={styles.textBold}>{item.reviewCount}</Text>
 				<Text style={styles.text} >Reviews</Text>
 			</View>
-			<View style={styles.column}>
+			<View style={styles.statsColumn}>
 				<Text style={styles.textBold}>{item.ratingAverage}</Text>
 				<Text style={styles.text} >Rating</Text>
 			</View>
@@ -125,15 +125,19 @@ const styles = StyleSheet.create({
 		padding: 10,
 	},
 	text: {
+		fontFamily: theme.fonts,
+		fontSize: theme.fontSizes.body,
 		fontWeight: theme.fontWeights.normal,
 		color: theme.colors.textSecondary,
 	},
 	textBold: {
+		fontFamily: theme.fonts,
+		fontSize: theme.fontSizes.subheading,
 		fontWeight: theme.fontWeights.bold,
 		color: theme.colors.textPrimary,
-		fontSize: theme.fontSizes.subheading
 	},
 	language: {
+		fontVariant: theme.fonts,
 		backgroundColor: theme.colors.primary,
 		color: theme.colors.backgroundTertiary,
 		padding: 5,
@@ -159,7 +163,12 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		justifyContent: 'space-between',
 		paddingHorizontal: 20
-	}
+	},
+	statsColumn: {
+		flexDirection: 'column',
+		gap: 5,
+		alignItems: 'center'
+	},
 });
 
 export default RepositoryList;
