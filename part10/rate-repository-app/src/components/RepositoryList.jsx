@@ -1,7 +1,7 @@
 import { View, StyleSheet, FlatList, Text, Image } from 'react-native';
 import theme from '../theme';
-import { useState, useEffect } from 'react';
 import useRepositories from '../hooks/useRepositories';
+import { GET_REPOSITORIES } from '../graphql/queries';
 
 const formatCount = (num) => {
 	if (num < 1000) return String(num);
@@ -58,6 +58,7 @@ const RepositoryItem = ({ item }) => {
 
 const RepositoryList = () => {
 	const { repositories } = useRepositories();
+	const { data, error, loading } = useQuery(GET_REPOSITORIES);
 
 	// Get the nodes from the edges array
 	const repositoryNodes = repositories
