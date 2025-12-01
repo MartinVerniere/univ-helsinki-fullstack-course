@@ -55,7 +55,10 @@ const RepositoryItem = ({ item }) => {
 }
 
 const RepositoryList = () => {
-	const { repositories } = useRepositories();
+	const { repositories, loading, error } = useRepositories();
+
+	if (loading) return <Text>Loading...</Text>;
+	if (error) return <Text>Error: {error.message}</Text>;
 
 	// Get the nodes from the edges array
 	const repositoryNodes = repositories
