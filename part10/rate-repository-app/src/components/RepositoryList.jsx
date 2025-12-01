@@ -1,7 +1,6 @@
 import { View, StyleSheet, FlatList, Text, Image } from 'react-native';
 import theme from '../theme';
 import useRepositories from '../hooks/useRepositories';
-import { GET_REPOSITORIES } from '../graphql/queries';
 
 const formatCount = (num) => {
 	if (num < 1000) return String(num);
@@ -19,7 +18,6 @@ const RepositoryItemMainInfo = ({ item }) => {
 				<Text style={styles.text}>{item.description}</Text>
 				<Text style={styles.language}>{item.language}</Text>
 			</View>
-
 		</View>
 	);
 }
@@ -58,11 +56,10 @@ const RepositoryItem = ({ item }) => {
 
 const RepositoryList = () => {
 	const { repositories } = useRepositories();
-	const { data, error, loading } = useQuery(GET_REPOSITORIES);
 
 	// Get the nodes from the edges array
 	const repositoryNodes = repositories
-		? repositories.edges.map(edge => edge.node)
+		? repositories.map(edge => edge.node)
 		: [];
 
 	return (
@@ -114,6 +111,7 @@ const styles = StyleSheet.create({
 	},
 	column: {
 		flexDirection: 'column',
+		flexShrink: 1,
 		gap: 5
 	},
 	row: {
