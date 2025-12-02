@@ -3,6 +3,9 @@ import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import theme from "../theme";
 import * as yup from 'yup';
 import { useSignIn } from "../hooks/useSignIn";
+import AuthStorage from "../utils/authStorage";
+
+const authStorage = new AuthStorage();
 
 const initialValues = {
 	username: '',
@@ -24,10 +27,12 @@ const SignIn = () => {
 	const onSubmit = async (values) => {
 		if (formik.isValid) {
 			const { username, password } = values;
-			
+
 			try {
 				const { data } = await signIn({ username, password });
 				console.log(data);
+				await authStorage.setAccessToken(data.authenticate.accessToken);
+				console.log("TOKEN SAVED:", await authStorage.getAccessToken());
 			} catch (error) {
 				console.log(error);
 			}
