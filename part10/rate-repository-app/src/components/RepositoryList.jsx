@@ -14,9 +14,9 @@ const RepositoryItemMainInfo = ({ item }) => {
 		<View style={styles.row}>
 			<Image style={styles.avatar} source={{ uri: item.ownerAvatarUrl }} />
 			<View style={styles.column}>
-				<Text style={styles.textBold}>{item.fullName}</Text>
-				<Text style={styles.text}>{item.description}</Text>
-				<Text style={styles.language}>{item.language}</Text>
+				<Text testID="fullName" style={styles.textBold}>{item.fullName}</Text>
+				<Text testID="description" style={styles.text}>{item.description}</Text>
+				<Text testID="language" style={styles.language}>{item.language}</Text>
 			</View>
 		</View>
 	);
@@ -26,19 +26,19 @@ const RepositoryItemStatsInfo = ({ item }) => {
 	return (
 		<View style={styles.statsRow}>
 			<View style={styles.statsColumn}>
-				<Text style={styles.textBold}>{formatCount(item.stargazersCount)}</Text>
+				<Text testID="stargazersCount" style={styles.textBold}>{formatCount(item.stargazersCount)}</Text>
 				<Text style={styles.text} >Stars</Text>
 			</View>
 			<View style={styles.statsColumn}>
-				<Text style={styles.textBold}>{formatCount(item.forksCount)}</Text>
+				<Text testID="forksCount" style={styles.textBold}>{formatCount(item.forksCount)}</Text>
 				<Text style={styles.text} >Forks</Text>
 			</View>
 			<View style={styles.statsColumn}>
-				<Text style={styles.textBold}>{item.reviewCount}</Text>
+				<Text testID="reviewCount" style={styles.textBold}>{item.reviewCount}</Text>
 				<Text style={styles.text} >Reviews</Text>
 			</View>
 			<View style={styles.statsColumn}>
-				<Text style={styles.textBold}>{item.ratingAverage}</Text>
+				<Text testID="ratingAverage" style={styles.textBold}>{item.ratingAverage}</Text>
 				<Text style={styles.text} >Rating</Text>
 			</View>
 		</View>
@@ -47,14 +47,14 @@ const RepositoryItemStatsInfo = ({ item }) => {
 
 const RepositoryItem = ({ item }) => {
 	return (
-		<View style={styles.listElement}>
+		<View testID="repositoryItem" style={styles.listElement}>
 			<RepositoryItemMainInfo item={item} />
 			<RepositoryItemStatsInfo item={item} />
 		</View>
 	);
 }
 
-const RepositoryListContainer = ({ repositories }) => {
+export const RepositoryListContainer = ({ repositories }) => {
 	const repositoryNodes = repositories
 		? repositories.map(edge => edge.node)
 		: [];

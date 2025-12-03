@@ -1,28 +1,5 @@
 import { render, screen, within } from '@testing-library/react-native';
-import { Text, View } from "react-native";
-
-const RepositoryListContainer = ({ repositoryNodes }) => {
-	const formatCount = (num) => {
-		if (num < 1000) return String(num);
-		return (num / 1000).toFixed(1).replace('.0', '') + 'k';
-	};
-
-	return (
-		<View>
-			{repositoryNodes.map((item) => (
-				<View key={item.id} testID="repositoryItem">
-					<Text testID="fullName">{item.fullName}</Text>
-					<Text testID='description'>{item.description}</Text>
-					<Text testID='language'>{item.language}</Text>
-					<Text testID='stargazersCount'>{formatCount(item.stargazersCount)}</Text>
-					<Text testID='forksCount'>{formatCount(item.forksCount)}</Text>
-					<Text testID='reviewCount'>{item.reviewCount}</Text>
-					<Text testID='ratingAverage'>{item.ratingAverage}</Text>
-				</View>
-			))}
-		</View>
-	);
-}
+import { RepositoryListContainer } from '../../components/RepositoryList';
 
 describe('RepositoryList', () => {
 	describe('RepositoryListContainer', () => {
@@ -70,7 +47,7 @@ describe('RepositoryList', () => {
 				],
 			};
 
-			render(<RepositoryListContainer repositoryNodes={repositories.edges.map(edge => edge.node)} />);
+			render(<RepositoryListContainer repositories={repositories.edges} />);
 
 			const repositoryItems = screen.getAllByTestId('repositoryItem');
 			const [firstRepositoryItem, secondRepositoryItem] = repositoryItems;
