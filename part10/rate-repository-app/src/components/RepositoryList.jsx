@@ -54,13 +54,7 @@ const RepositoryItem = ({ item }) => {
 	);
 }
 
-const RepositoryList = () => {
-	const { repositories, loading, error } = useRepositories();
-
-	if (loading) return <Text>Loading...</Text>;
-	if (error) return <Text>Error: {error.message}</Text>;
-
-	// Get the nodes from the edges array
+const RepositoryListContainer = ({ repositories }) => {
 	const repositoryNodes = repositories
 		? repositories.map(edge => edge.node)
 		: [];
@@ -74,6 +68,15 @@ const RepositoryList = () => {
 			style={styles.list}
 		/>
 	);
+}
+
+const RepositoryList = () => {
+	const { repositories, loading, error } = useRepositories();
+
+	if (loading) return <Text>Loading...</Text>;
+	if (error) return <Text>Error: {error.message}</Text>;
+
+	return <RepositoryListContainer repositories={repositories} />;
 };
 
 const styles = StyleSheet.create({
