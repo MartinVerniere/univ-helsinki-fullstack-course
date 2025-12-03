@@ -27,6 +27,7 @@ export default [
 				version: "detect",
 			},
 		},
+		extends: ["eslint:recommended", "plugin:react/recommended", "plugin:jest/recommended"],
 		rules: {
 			"react/prop-types": "off",
 			"react/react-in-jsx-scope": "off",
