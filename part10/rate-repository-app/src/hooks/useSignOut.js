@@ -11,5 +11,5 @@ export const useSignOut = () => {
 		apolloClient.resetStore();
 	};
 
-	return { signOut };
+	return [signOut];
 };

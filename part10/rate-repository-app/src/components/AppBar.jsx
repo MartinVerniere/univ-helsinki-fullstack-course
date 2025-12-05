@@ -25,15 +25,26 @@ const AppBarButton = ({ text, onPress }) => {
 	);
 }
 
-const LoginAppBarTab = ({ me, logout }) => {
+const ShowOnlyLoggedInTabs = ({ logout }) => {
 	return (
-		me
-			? <AppBarButton text={"Sign out"} onPress={logout} />
-			: <AppBarTab text={"Sign in"} linkTo={"/signin"} />);
+		<>
+			<AppBarTab text={"Create a review"} linkTo={"/repositories/create-review"} />
+			<AppBarButton text={"Sign out"} onPress={logout} />
+		</>
+	);
+}
+
+const ShowOnlyLoggedOutTabs = () => {
+	return (
+		<>
+			<AppBarTab text={"Sign in"} linkTo={"/signIn"} />
+			<AppBarTab text={"Sign up"} linkTo={"/signUp"} />
+		</>
+	);
 }
 
 const AppBar = () => {
-	const { signOut } = useSignOut();
+	const [signOut] = useSignOut();
 	const { data } = useMe();
 
 	const me = data
@@ -44,8 +55,10 @@ const AppBar = () => {
 		<View style={styles.container}>
 			<ScrollView contentContainerStyle={styles.scroll} horizontal>
 				<AppBarTab text={"Repositories"} linkTo={"/repositories"} />
-				<AppBarTab text={"Create a review"} linkTo={"/repositories/create-review"} />
-				<LoginAppBarTab me={me} logout={signOut} />
+				{me
+					? <ShowOnlyLoggedInTabs logout={signOut} />
+					: <ShowOnlyLoggedOutTabs />
+				}
 			</ScrollView>
 		</View>
 	);
