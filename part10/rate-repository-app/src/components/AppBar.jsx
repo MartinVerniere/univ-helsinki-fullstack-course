@@ -35,7 +35,7 @@ const LoginAppBarTab = ({ me, logout }) => {
 const AppBar = () => {
 	const { signOut } = useSignOut();
 	const { data } = useMe();
-	
+
 	const me = data
 		? data.me
 		: null;
@@ -43,7 +43,8 @@ const AppBar = () => {
 	return (
 		<View style={styles.container}>
 			<ScrollView contentContainerStyle={styles.scroll} horizontal>
-				<AppBarTab text={"Repositories"} linkTo={"/"} />
+				<AppBarTab text={"Repositories"} linkTo={"/repositories"} />
+				<AppBarTab text={"Create a review"} linkTo={"/repositories/create-review"} />
 				<LoginAppBarTab me={me} logout={signOut} />
 			</ScrollView>
 		</View>
