@@ -3,20 +3,36 @@ import theme from '../theme';
 import useRepositories from '../hooks/useRepositories';
 import { RepositoryItem } from './RepositoryItem';
 import { useNavigate } from 'react-router-native';
+import { useState } from 'react';
+import { Picker } from '@react-native-picker/picker';
 
 const ItemSeparator = () => <View style={styles.separator} />;
 
 const RepositoryListElement = ({ item }) => {
 	const navigate = useNavigate();
-	
+
 	return (
-		<Pressable onPress={() => {navigate(item.id)}}>
+		<Pressable onPress={() => { navigate(item.id) }}>
 			<RepositoryItem item={item} />
 		</Pressable>
 	);
 };
 
-export const RepositoryListContainer = ({ repositories }) => {
+const OrderSelectorComponent = ({ selectedOrder, setSelectedOrder }) => {
+	return (
+		<Picker
+			selectedValue={selectedOrder}
+			onValueChange={(itemValue, itemIndex) =>
+				setSelectedOrder(itemValue)
+			}>
+			<Picker.Item label="Created At" value="CREATED_AT" />
+			<Picker.Item label="Rating Average (Highest First)" value="RATING_AVERAGE" />
+			<Picker.Item label="Rating Average (Lowest First)" value="RATING_AVERAGE_REVERSE" />
+		</Picker>
+	);
+}
+
+export const RepositoryListContainer = ({ repositories, selectedOrder, setSelectedOrder }) => {
 	const repositoryNodes = repositories
 		? repositories.map(edge => edge.node)
 		: [];
@@ -27,18 +43,20 @@ export const RepositoryListContainer = ({ repositories }) => {
 			ItemSeparatorComponent={ItemSeparator}
 			renderItem={({ item }) => <RepositoryListElement item={item} />}
 			keyExtractor={repository => repository.id}
+			ListHeaderComponent={<OrderSelectorComponent selectedOrder={selectedOrder} setSelectedOrder={setSelectedOrder} />}
 			style={styles.list}
 		/>
 	);
 }
 
 const RepositoryList = () => {
-	const { repositories, loading, error } = useRepositories();
+	const [selectedOrder, setSelectedOrder] = useState("CREATED_AT");
+	const { repositories, loading, error } = useRepositories(selectedOrder);
 
 	if (loading) return <Text>Loading...</Text>;
 	if (error) return <Text>Error: {error.message}</Text>;
 
-	return <RepositoryListContainer repositories={repositories} />;
+	return <RepositoryListContainer repositories={repositories} selectedOrder={selectedOrder} setSelectedOrder={setSelectedOrder} />;
 };
 
 const styles = StyleSheet.create({
