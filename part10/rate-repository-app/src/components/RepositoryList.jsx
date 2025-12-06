@@ -1,10 +1,11 @@
-import { View, StyleSheet, FlatList, Text, Pressable } from 'react-native';
+import { View, StyleSheet, FlatList, Text, Pressable, TextInput } from 'react-native';
 import theme from '../theme';
 import useRepositories from '../hooks/useRepositories';
 import { RepositoryItem } from './RepositoryItem';
 import { useNavigate } from 'react-router-native';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Picker } from '@react-native-picker/picker';
+import { useDebounce } from 'use-debounce';
 
 const ItemSeparator = () => <View style={styles.separator} />;
 
@@ -22,7 +23,7 @@ const OrderSelectorComponent = ({ selectedOrder, setSelectedOrder }) => {
 	return (
 		<Picker
 			selectedValue={selectedOrder}
-			onValueChange={(itemValue, itemIndex) =>
+			onValueChange={(itemValue) =>
 				setSelectedOrder(itemValue)
 			}>
 			<Picker.Item label="Created At" value="CREATED_AT" />
@@ -32,31 +33,66 @@ const OrderSelectorComponent = ({ selectedOrder, setSelectedOrder }) => {
 	);
 }
 
-export const RepositoryListContainer = ({ repositories, selectedOrder, setSelectedOrder }) => {
-	const repositoryNodes = repositories
-		? repositories.map(edge => edge.node)
-		: [];
-
+const RepositorySearchBar = ({ selectedQuery, setSelectedQuery }) => {
 	return (
-		<FlatList
-			data={repositoryNodes}
-			ItemSeparatorComponent={ItemSeparator}
-			renderItem={({ item }) => <RepositoryListElement item={item} />}
-			keyExtractor={repository => repository.id}
-			ListHeaderComponent={<OrderSelectorComponent selectedOrder={selectedOrder} setSelectedOrder={setSelectedOrder} />}
-			style={styles.list}
-		/>
+		<View style={styles.searchBarContainer}>
+			<TextInput
+				placeholder="Search a repository..."
+				style={styles.searchBar}
+				value={selectedQuery}
+				onChangeText={text => setSelectedQuery(text)}
+			/>
+		</View>
 	);
+}
+
+export class RepositoryListContainer extends React.Component {
+	renderHeader = () => {
+		const { selectedQuery, setSelectedQuery, selectedOrder, setSelectedOrder } = this.props;
+		return (
+			<>
+				<RepositorySearchBar selectedQuery={selectedQuery} setSelectedQuery={setSelectedQuery} />
+				<OrderSelectorComponent selectedOrder={selectedOrder} setSelectedOrder={setSelectedOrder} />
+			</>
+		);
+	};
+
+	render() {
+		const { repositories } = this.props;
+		const repositoryNodes = repositories
+			? repositories.map(edge => edge.node)
+			: [];
+
+		return (
+			<FlatList
+				data={repositoryNodes}
+				ItemSeparatorComponent={ItemSeparator}
+				renderItem={({ item }) => <RepositoryListElement item={item} />}
+				keyExtractor={repository => repository.id}
+				ListHeaderComponent={this.renderHeader}
+				style={styles.list}
+			/>
+		);
+	}
 }
 
 const RepositoryList = () => {
 	const [selectedOrder, setSelectedOrder] = useState("CREATED_AT");
-	const { repositories, loading, error } = useRepositories(selectedOrder);
+	const [selectedQuery, setSelectedQuery] = useState("");
+	const [debouncedQuery] = useDebounce(selectedQuery, 500);
+
+	const { repositories, loading, error } = useRepositories(debouncedQuery, selectedOrder);
 
 	if (loading) return <Text>Loading...</Text>;
 	if (error) return <Text>Error: {error.message}</Text>;
 
-	return <RepositoryListContainer repositories={repositories} selectedOrder={selectedOrder} setSelectedOrder={setSelectedOrder} />;
+	return <RepositoryListContainer
+		repositories={repositories}
+		selectedQuery={selectedQuery}
+		setSelectedQuery={setSelectedQuery}
+		selectedOrder={selectedOrder}
+		setSelectedOrder={setSelectedOrder}
+	/>;
 };
 
 const styles = StyleSheet.create({
@@ -66,6 +102,15 @@ const styles = StyleSheet.create({
 	list: {
 		backgroundColor: theme.colors.backgroundSecondary
 	},
+	searchBarContainer: {
+		backgroundColor: theme.colors.backgroundSecondary
+	},
+	searchBar: {
+		borderRadius: 5,
+		backgroundColor: theme.colors.backgroundTertiary,
+		padding: 10,
+		margin: 20,
+	}
 });
 
 export default RepositoryList;
