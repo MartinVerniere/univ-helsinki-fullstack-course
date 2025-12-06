@@ -64,6 +64,7 @@ export const ME = gql`
 						text
 						createdAt
 						repository {
+							id
 							fullName
 							name
 							description

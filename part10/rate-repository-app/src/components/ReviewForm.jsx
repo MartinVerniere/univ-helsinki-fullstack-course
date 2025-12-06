@@ -52,7 +52,7 @@ const ReviewFormContainer = ({ formik, onSubmit }) => {
 }
 
 export const ReviewForm = () => {
-	const [addReview] = useReview();
+	const { addReview } = useReview();
 	let navigate = useNavigate();
 
 	const initialValues = {

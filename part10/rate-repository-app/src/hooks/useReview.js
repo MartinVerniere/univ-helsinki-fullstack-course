@@ -1,16 +1,37 @@
 import { useMutation } from '@apollo/client';
-import { ADD_REVIEW } from '../graphql/mutations';
+import { ADD_REVIEW, DELETE_REVIEW } from '../graphql/mutations';
+import { useApolloClient } from '@apollo/client';
 
 export const useReview = () => {
-	const [mutate, result] = useMutation(ADD_REVIEW);
+	const [createReview, resultCreate] = useMutation(ADD_REVIEW);
+	const [removeReview, resultRemove] = useMutation(DELETE_REVIEW);
+	const apolloClient = useApolloClient();
 
 	const addReview = async ({ username, name, rating, review }) => {
-		const response = await mutate({
+		const response = await createReview({
 			variables: { username, name, rating, review },
 		});
+
+		console.log("add review response:", response);
+		apolloClient.resetStore();
 
 		return response;
 	};
 
-	return [addReview, result];
+	const deleteReview = async (reviewId) => {
+		const response = await removeReview({
+			variables: { id: reviewId },
+		});
+		console.log("delete review response:", response);
+		apolloClient.resetStore();
+
+		return response;
+	}
+
+	return {
+		addReview,
+		deleteReview,
+		addResult: resultCreate,
+		deleteResult: resultRemove,
+	};;
 };
