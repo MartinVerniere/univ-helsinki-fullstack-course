@@ -6,8 +6,7 @@ import { useNavigate } from 'react-router-native';
 import React, { useState } from 'react';
 import { Picker } from '@react-native-picker/picker';
 import { useDebounce } from 'use-debounce';
-
-const ItemSeparator = () => <View style={styles.separator} />;
+import { ItemSeparator } from './ItemSeparator';
 
 const RepositoryListElement = ({ item }) => {
 	const navigate = useNavigate();
@@ -96,9 +95,6 @@ const RepositoryList = () => {
 };
 
 const styles = StyleSheet.create({
-	separator: {
-		height: 10,
-	},
 	list: {
 		backgroundColor: theme.colors.backgroundSecondary
 	},

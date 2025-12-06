@@ -29,6 +29,7 @@ const ShowOnlyLoggedInTabs = ({ logout }) => {
 	return (
 		<>
 			<AppBarTab text={"Create a review"} linkTo={"/repositories/create-review"} />
+			<AppBarTab text={"My reviews"} linkTo={"/my-reviews"} />
 			<AppBarButton text={"Sign out"} onPress={logout} />
 		</>
 	);
@@ -50,6 +51,8 @@ const AppBar = () => {
 	const me = data
 		? data.me
 		: null;
+
+	console.log("me:", me);
 
 	return (
 		<View style={styles.container}>

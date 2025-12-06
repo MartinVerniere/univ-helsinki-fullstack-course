@@ -1,29 +1,11 @@
-import { View, StyleSheet, Button, Text, FlatList, Pressable } from 'react-native';
+import { View, StyleSheet, Text, FlatList, Pressable } from 'react-native';
 import theme from '../theme';
 import { RepositoryItem } from './RepositoryItem';
 import * as Linking from 'expo-linking';
 import useRepositoryDetails from '../hooks/useRepositoryDetails';
 import { useParams } from 'react-router-native';
-import { format } from "date-fns";
-
-const ItemSeparator = () => <View style={styles.separator} />;
-
-const ReviewItem = ({ review }) => {
-	return (
-		<View style={styles.listElement}>
-			<View style={styles.circleContainer}>
-				<View style={styles.circle}>
-					<Text style={styles.textBold}>{review.rating}</Text>
-				</View>
-			</View>
-			<View style={styles.reviewContainer}>
-				<Text style={styles.textBold}>{review.user.username}</Text>
-				<Text style={styles.text}>{format(new Date(review.createdAt), "dd.MM.yyyy")}</Text>
-				<Text style={styles.text}>{review.text}</Text>
-			</View>
-		</View>
-	);
-}
+import { ReviewItem } from './ReviewItem';
+import { ItemSeparator } from './ItemSeparator';
 
 const RepositoryInfo = ({ repository }) => {
 	return (
@@ -64,9 +46,6 @@ export const RepositoryDetails = () => {
 };
 
 const styles = StyleSheet.create({
-	separator: {
-		height: 10,
-	},
 	circleContainer: {
 		marginRight: 15,
 		justifyContent: 'center',

@@ -5,6 +5,7 @@ import SignIn from './SignIn';
 import SignUp from './SignUp';
 import { RepositoryDetails } from './RepositoryDetails';
 import { ReviewForm } from './ReviewForm';
+import { ReviewsMade } from './ReviewsMade';
 
 const Main = () => {
 	return (
@@ -18,6 +19,7 @@ const Main = () => {
 				</Route>
 				<Route path="/signIn" element={<SignIn />} />
 				<Route path="/signUp" element={<SignUp />} />
+				<Route path="/my-reviews" element={<ReviewsMade />} />
 				<Route path="*" element={<Navigate to="/repositories" replace />} />
 			</Routes>
 		</>
