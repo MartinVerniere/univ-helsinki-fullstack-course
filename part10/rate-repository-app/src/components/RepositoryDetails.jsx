@@ -18,7 +18,7 @@ const RepositoryInfo = ({ repository }) => {
 	);
 }
 
-const RepositoryDetailsContainer = ({ repository }) => {
+const RepositoryDetailsContainer = ({ repository, onEndReach }) => {
 	const reviewNodes = repository
 		? repository.reviews.edges.map(edge => edge.node)
 		: [];
@@ -30,6 +30,8 @@ const RepositoryDetailsContainer = ({ repository }) => {
 			renderItem={({ item }) => <ReviewItem review={item} />}
 			keyExtractor={({ id }) => id}
 			ListHeaderComponent={() => <RepositoryInfo repository={repository} />}
+			onEndReached={onEndReach}
+			onEndReachedThreshold={0.5}
 			style={styles.list}
 		/>
 	);
@@ -37,12 +39,20 @@ const RepositoryDetailsContainer = ({ repository }) => {
 
 export const RepositoryDetails = () => {
 	const { id } = useParams();
-	const { repository, loading, error } = useRepositoryDetails(id);
+	const { repository, fetchMore, loading, error } = useRepositoryDetails({
+		id,
+		first: 5
+	});
+
+	const onEndReach = () => {
+		console.log("Fetching more");
+		fetchMore();
+	}
 
 	if (loading) return <Text>Loading...</Text>;
 	if (error) return <Text>Error: {error.message}</Text>;
 
-	return <RepositoryDetailsContainer repository={repository} />;
+	return <RepositoryDetailsContainer repository={repository} onEndReach={onEndReach} />;
 };
 
 const styles = StyleSheet.create({
