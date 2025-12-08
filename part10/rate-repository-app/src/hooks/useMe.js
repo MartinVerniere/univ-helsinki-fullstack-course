@@ -6,8 +6,6 @@ const useMe = (withReviews = false) => {
 		variables: withReviews ? { includeReviews: true } : {}
 	});
 
-	console.log('useMe data:', data);
-
 	return { data, loading, error };
 };
 

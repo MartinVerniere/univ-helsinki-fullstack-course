@@ -52,8 +52,6 @@ const AppBar = () => {
 		? data.me
 		: null;
 
-	console.log("me:", me);
-
 	return (
 		<View style={styles.container}>
 			<ScrollView contentContainerStyle={styles.scroll} horizontal>

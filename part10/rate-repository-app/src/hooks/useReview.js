@@ -12,7 +12,6 @@ export const useReview = () => {
 			variables: { username, name, rating, review },
 		});
 
-		console.log("add review response:", response);
 		apolloClient.resetStore();
 
 		return response;
@@ -22,7 +21,7 @@ export const useReview = () => {
 		const response = await removeReview({
 			variables: { id: reviewId },
 		});
-		console.log("delete review response:", response);
+		
 		apolloClient.resetStore();
 
 		return response;
