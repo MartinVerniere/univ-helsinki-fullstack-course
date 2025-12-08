@@ -57,7 +57,7 @@ export class RepositoryListContainer extends React.Component {
 	};
 
 	render() {
-		const { repositories } = this.props;
+		const { repositories, onEndReach } = this.props;
 		const repositoryNodes = repositories
 			? repositories.map(edge => edge.node)
 			: [];
@@ -69,6 +69,8 @@ export class RepositoryListContainer extends React.Component {
 				renderItem={({ item }) => <RepositoryListElement item={item} />}
 				keyExtractor={repository => repository.id}
 				ListHeaderComponent={this.renderHeader}
+				onEndReached={onEndReach}
+				onEndReachedThreshold={0.5}
 				style={styles.list}
 			/>
 		);
@@ -80,13 +82,32 @@ const RepositoryList = () => {
 	const [selectedQuery, setSelectedQuery] = useState("");
 	const [debouncedQuery] = useDebounce(selectedQuery, 500);
 
-	const { repositories, loading, error } = useRepositories(debouncedQuery, selectedOrder);
+	const sortingOrder = selectedOrder === "CREATED_AT"
+		? "CREATED_AT"
+		: "RATING_AVERAGE";
+
+	const sortingOrderAscending = selectedOrder === "RATING_AVERAGE_REVERSE"
+		? "ASC"
+		: "DESC";
+
+	const { repositories, fetchMore, loading, error } = useRepositories({
+		searchKeyword: debouncedQuery,
+		orderBy: sortingOrder,
+		orderDirection: sortingOrderAscending,
+		first: 8
+	});
+
+	const onEndReach = () => {
+		console.log("Fetching more");
+		fetchMore();
+	}
 
 	if (loading) return <Text>Loading...</Text>;
 	if (error) return <Text>Error: {error.message}</Text>;
 
 	return <RepositoryListContainer
 		repositories={repositories}
+		onEndReach={onEndReach}
 		selectedQuery={selectedQuery}
 		setSelectedQuery={setSelectedQuery}
 		selectedOrder={selectedOrder}
