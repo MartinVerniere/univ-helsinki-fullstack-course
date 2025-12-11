@@ -17,10 +17,13 @@ jobs:
           fetch-depth: 1
           sparse-checkout: |
             part11/**
-      - uses: actions/setup-node@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: "20"
       - name: Install dependencies
+        working-directory: ./part11/full-stack-open-pokedex
         run: npm install
-      - name: Check style
+      - name: Check lint style
+        working-directory: ./part11/full-stack-open-pokedex
         run: npm run eslint
