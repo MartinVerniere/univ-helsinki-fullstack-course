@@ -1,0 +1,24 @@
+name: Part 11 Deployment pipeline
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "part11/**"
+
+jobs:
+  simple_deployment_pipeline:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout part11 only
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          sparse-checkout: |
+            part11/**
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install dependencies
+        run: npm install
