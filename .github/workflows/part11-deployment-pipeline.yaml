@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - main
-    paths:
-      - "part11/**"
 
 jobs:
   simple_deployment_pipeline:
