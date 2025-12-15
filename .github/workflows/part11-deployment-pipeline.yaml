@@ -25,9 +25,15 @@ jobs:
       - name: Check lint style
         working-directory: ./part11/full-stack-open-pokedex
         run: npm run eslint
-      - name: Build
+      - name: Run build
         working-directory: ./part11/full-stack-open-pokedex
         run: npm run build
-      - name: Test
+      - name: Run Jest tests
         working-directory: ./part11/full-stack-open-pokedex
         run: npm run test
+      - name: Install Playwright Browsers
+        working-directory: ./part11/full-stack-open-pokedex
+        run: npx playwright install --with-deps
+      - name: Run Playwright tests
+        working-directory: ./part11/full-stack-open-pokedex
+        run: npm run test:e2e
