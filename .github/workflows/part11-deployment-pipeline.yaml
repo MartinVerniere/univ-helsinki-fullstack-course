@@ -43,7 +43,7 @@ jobs:
       - name: Trigger deployment
         if: ${{ github.event_name == 'push' }}
         run: curl https://api.render.com/deploy/srv-${{ secrets.RENDER_SERVICE_ID }}?key=${{ secrets.RENDER_API_KEY }}
-      
+
   tag_release:
     if: ${{ github.event_name == 'push' && !contains(github.event.head_commit.message, '#skip') }}
     needs: [simple_deployment_pipeline]
@@ -55,3 +55,31 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DEFAULT_BUMP: patch
+
+  discord_notification:
+    if: always()
+    needs: [simple_deployment_pipeline]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Successfull build
+        if: ${{ needs.simple_deployment_pipeline.result == "success" }}
+        uses: rjstone/discord-webhook-notify@v2
+        with:
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+          username: GitHub
+          severity: info
+          color: "#23C552"
+          title: New version of Pokedex deployed
+          description: "Deployment succeeded, new version released!!"
+          details: |
+            to https://full-stack-open-pokedex-u6ry.onrender.com/ by ${{ github.actor }}
+      - name: Error in build
+        if: ${{ needs.simple_deployment_pipeline.result == "failure" }}
+        uses: rjstone/discord-webhook-notify@v2
+        with:
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+          username: GitHub
+          severity: error
+          color: "#F84F31"
+          title: Build failed
+          description: "Build failed: something went wrong in commit > https://github.com/${{ github.repository }}/commit/${{ github.sha }}!!. Blame ${{ github.actor }} for this"
