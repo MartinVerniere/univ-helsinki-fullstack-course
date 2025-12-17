@@ -1,8 +1,5 @@
 name: Part 11 Deployment pipeline
 
-env:
-  RELEASABLE_TAG: ${{ github.event_name == 'push' }}
-
 on:
   push:
     branches:
@@ -46,8 +43,9 @@ jobs:
       - name: Trigger deployment
         if: ${{ github.event_name == 'push' }}
         run: curl https://api.render.com/deploy/srv-${{ secrets.RENDER_SERVICE_ID }}?key=${{ secrets.RENDER_API_KEY }}
+      
   tag_release:
-    if: env.RELEASE_TAG == 'true'
+    if: ${{ github.event_name == 'push' && !contains(github.event.head_commit.message, '#skip') }}
     needs: [simple_deployment_pipeline]
     runs-on: ubuntu-latest
     steps:
