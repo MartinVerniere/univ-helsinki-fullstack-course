@@ -15,5 +15,5 @@ app.get("/version", (req, res) => {
 })
 
 app.get("/health", (req, res) => {
-	res.status(500).send("Service unhealthy")
+	res.send("ok")
 })
