@@ -61,7 +61,7 @@ jobs:
     needs: [simple_deployment_pipeline]
     runs-on: ubuntu-latest
     steps:
-      - name: Successfull build
+      - name: Successful build
         if: ${{ needs.simple_deployment_pipeline.result == "success" }}
         uses: rjstone/discord-webhook-notify@v2
         with:
@@ -73,6 +73,7 @@ jobs:
           description: "Deployment succeeded, new version released!!"
           details: |
             to https://full-stack-open-pokedex-u6ry.onrender.com/ by ${{ github.actor }}
+
       - name: Error in build
         if: ${{ needs.simple_deployment_pipeline.result == "failure" }}
         uses: rjstone/discord-webhook-notify@v2
@@ -82,4 +83,6 @@ jobs:
           severity: error
           color: "#F84F31"
           title: Build failed
-          description: "Build failed: something went wrong in commit > https://github.com/${{ github.repository }}/commit/${{ github.sha }}!!. Blame ${{ github.actor }} for this"
+          description: "Build failed: something went wrong"
+          details: |
+            in commit > https://github.com/${{ github.repository }}/commit/${{ github.sha }}!. Blame ${{ github.actor }} for this
