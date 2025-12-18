@@ -63,7 +63,7 @@ jobs:
     steps:
       - name: Successful build
         if: ${{ needs.simple_deployment_pipeline.result == 'success' }}
-        uses: rjstone/discord-webhook-notify@v2
+        uses: sarisia/actions-status-discord@v1
         with:
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
           username: GitHub
@@ -76,7 +76,7 @@ jobs:
 
       - name: Error in build
         if: ${{ needs.simple_deployment_pipeline.result == 'failure' }}
-        uses: rjstone/discord-webhook-notify@v2
+        uses: sarisia/actions-status-discord@v1
         with:
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
           username: GitHub
