@@ -1,12 +1,17 @@
 name: Part 11 Deployment pipeline
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches: [main]
-    types: [opened, synchronize]
+  workflow_dispatch:
+
+# on:
+#   push:
+#     branches:
+#       - main
+#     paths:
+#       - "part11/full-stack-open-pokedex/**"
+#   pull_request:
+#     branches: [main]
+#     types: [opened, synchronize]
 
 jobs:
   simple_deployment_pipeline:
@@ -75,7 +80,7 @@ jobs:
         if: ${{ needs.simple_deployment_pipeline.result == 'failure' }}
         uses: sarisia/actions-status-discord@v1
         with:
-          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
           username: GitHub
           color: 0xF84F31
           title: "Build failed: something went wrong"
