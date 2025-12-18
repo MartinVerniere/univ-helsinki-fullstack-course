@@ -57,12 +57,12 @@ jobs:
           DEFAULT_BUMP: patch
 
   discord_notification:
-    if: always()
+    if: ${{ always() }}
     needs: [simple_deployment_pipeline]
     runs-on: ubuntu-latest
     steps:
       - name: Successful build
-        if: ${{ needs.simple_deployment_pipeline.result == "success" }}
+        if: ${{ needs.simple_deployment_pipeline.result == 'success' }}
         uses: rjstone/discord-webhook-notify@v2
         with:
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
@@ -75,7 +75,7 @@ jobs:
             to https://full-stack-open-pokedex-u6ry.onrender.com/ by ${{ github.actor }}
 
       - name: Error in build
-        if: ${{ needs.simple_deployment_pipeline.result == "failure" }}
+        if: ${{ needs.simple_deployment_pipeline.result == 'failure' }}
         uses: rjstone/discord-webhook-notify@v2
         with:
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
